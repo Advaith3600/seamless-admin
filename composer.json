@@ -1,0 +1,28 @@
+{
+    "name": "advaith/seamless-admin",
+    "description": "A seamless django like admin panel setup for Laravel",
+    "type": "library",
+    "require": {
+        "php": "^8.0.2"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Advaith\\SeamlessAdmin\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Advaith A J",
+            "email": "advaitharunjeena@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Advaith\\SeamlessAdmin\\SeamlessAdminServiceProvider"
+            ]
+        }
+    }
+}

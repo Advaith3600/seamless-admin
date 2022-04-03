@@ -1,0 +1,22 @@
+{
+  "name": "seamless-admin",
+  "version": "1.0.0",
+  "description": "A seamless django like admin panel setup for Laravel",
+  "scripts": {
+    "build-tailwindcss": "npx tailwindcss -i ./src/resources/assets/css/tailwind-dev.css -o ./src/resources/assets/css/tailwind.css",
+    "watch-sass": "npm run build-css -- -w",
+    "build-css": "node-sass ./src/resources/assets/scss/app.scss ./src/resources/assets/css/app.css --output-style compressed",
+    "build": "npm run build-css && npm run build-tailwindcss"
+  },
+  "keywords": [
+    "laravel",
+    "admin"
+  ],
+  "author": "Advaith A J",
+  "license": "MIT",
+  "devDependencies": {
+    "node-sass": "^7.0.1",
+    "normalize.css": "^8.0.1",
+    "tailwindcss": "^3.0.23"
+  }
+}
