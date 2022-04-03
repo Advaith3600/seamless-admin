@@ -6,7 +6,7 @@
 <body>
     @include('seamless::partials.sidebar')
 
-    <main>
+    <main id="main">
         @include('seamless::partials.navbar')
 
         @yield('content')

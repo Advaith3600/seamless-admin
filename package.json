@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "A seamless django like admin panel setup for Laravel",
   "scripts": {
-    "build-tailwindcss": "npx tailwindcss -i ./src/resources/assets/css/tailwind-dev.css -o ./src/resources/assets/css/tailwind.css",
-    "watch-sass": "npm run build-css -- -w",
+    "build-tailwind": "npx tailwindcss -i ./src/resources/assets/tailwind/tailwind.css -o ./src/resources/assets/css/tailwind.css --minify",
     "build-css": "node-sass ./src/resources/assets/scss/app.scss ./src/resources/assets/css/app.css --output-style compressed",
-    "build": "npm run build-css && npm run build-tailwindcss"
+    "build": "npm run build-css && npm run build-tailwindcss",
+    "watch-tailwind": "npm run build-tailwind -- --watch",
+    "watch-sass": "npm run build-css -- -w"
   },
   "keywords": [
     "laravel",

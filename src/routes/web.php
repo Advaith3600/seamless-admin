@@ -10,5 +10,7 @@ Route::prefix('admin')
         // welcome screen for the admin panel
         Route::get('', [AdminController::class, 'welcome'])->name('welcome');
         // dynamic routing for the CRUD operations
-        Route::resource('type', AdminController::class);
+        Route::prefix('{type}')->name('type.')->group(function () {
+            Route::resource('id', AdminController::class)->names('');
+        });
     });

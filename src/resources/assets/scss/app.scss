@@ -1,1 +1,14 @@
 @import 'node_modules/normalize.css/normalize';
+
+// global styles
+body {
+    line-height: 1.5;
+    font-family: 'Nunito Sans', 'Segoe UI', sans-serif;
+}
+h1, h2, h3, h4 { line-height: 1; }
+
+@import 'variables';
+@import 'helper';
+
+// css for the layout
+@import 'layout';

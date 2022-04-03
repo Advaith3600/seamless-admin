@@ -21,5 +21,11 @@ class SeamlessAdminServiceProvider extends ServiceProvider
 
         // registering views
         $this->loadViewsFrom(__DIR__ . './resources/views', 'seamless');
+
+        if ($this->app->runningInConsole()) {
+            //registering public css assets
+            $this->publishes([__DIR__ . '/resources/assets/css' => public_path('seamless-admin/css')], 'assets');
+            $this->publishes([__DIR__ . '/resources/assets/js' => public_path('seamless-admin/js')], 'assets');
+        }
     }
 }

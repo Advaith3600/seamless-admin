@@ -48,4 +48,18 @@ class ModelResolver
                 $this->models[] = $className;
         }
     }
+
+    // function to parse the type into a md5 string
+    public function parseType(string $type): string
+    {
+        return md5($type);
+    }
+
+    // function resolve the type from md5 string
+    public function resolveType(string $type): string | null
+    {
+        return collect($this->models)
+            ->filter(fn ($model) => md5($model) == $type)
+            ->first();
+    }
 }

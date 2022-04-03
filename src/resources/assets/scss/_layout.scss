@@ -1,0 +1,44 @@
+body {
+    min-height: 100vh;
+    background: var(--seamless-background);
+    color: var(--seamless-color);
+
+    display: grid;
+    grid-template-columns: 300px 1fr;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+}
+
+#footer {
+    margin-top: auto;
+    text-align: center;
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+#sidebar {
+    background: var(--seamless-sidebar-background);
+    color: var(--seamless-sidebar-color);
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+
+    ul a {
+        display: flex;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        transition: background 250ms ease;
+
+        &:hover {
+            background: rgba(0, 0, 0, .2);
+        }
+
+        &.active {
+            background: rgba(0, 0, 0, .4);
+        }
+    }
+}
+
