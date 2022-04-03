@@ -2,7 +2,7 @@
 
 <aside id="sidebar">
     <ul>
-        @foreach ($resolver->models as $model)
+        @forelse ($resolver->models as $model)
             <li>
                 <a
                     href="{{ route('admin.type.index', $resolver->parseType($model) ) }}"
@@ -11,6 +11,11 @@
                     {{ str(class_basename($model))->plural() }}
                 </a>
             </li>
-        @endforeach
+
+        @empty
+            <li class="text-center blank">
+                No tables found.
+            </li>
+        @endforelse
     </ul>
 </aside>

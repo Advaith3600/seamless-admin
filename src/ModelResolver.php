@@ -3,6 +3,7 @@
 namespace Advaith\SeamlessAdmin;
 
 use FilesystemIterator;
+use Illuminate\Support\Facades\DB;
 
 class ModelResolver
 {
@@ -61,5 +62,12 @@ class ModelResolver
         return collect($this->models)
             ->filter(fn ($model) => md5($model) == $type)
             ->first();
+    }
+
+    // function to get column information from the table
+    public function getColumns(string $type): array
+    {
+        $table = (new $type)->getTable();
+        return DB::select("SHOW COLUMNS FROM $table WHERE type != 'timestamp' AND extra != 'auto_increment'");
     }
 }
