@@ -38,8 +38,14 @@
             </div>
 
             <div class="flex gap-2 mt-4 justify-end">
-                <a href="{{ route('admin.type.index', request()->type) }}" class="btn grey">Cancel</a>
-                <button class="btn" type="submit">Create</button>
+                <a href="{{ route('admin.type.index', request()->type) }}" class="btn grey">
+                    <i data-feather="x"></i>
+                    Cancel
+                </a>
+                <button class="btn" type="submit">
+                    <i data-feather="plus"></i>
+                    Create
+                </button>
             </div>
         </form>
     </div>

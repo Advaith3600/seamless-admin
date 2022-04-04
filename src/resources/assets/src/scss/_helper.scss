@@ -1,4 +1,4 @@
-$green: #27ae60;
+$green: #20a056;
 $grey: #444;
 $yellow: #e4cf1b;
 $red: #cc2626;
@@ -73,4 +73,42 @@ table {
     th, td {
         padding: 6px 12px;
     }
+}
+
+.search {
+    position: relative;
+
+    input {
+        padding-right: 34px;
+    }
+
+    .icon {
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        cursor: pointer;
+
+        svg { width: 16px; }
+    }
+}
+
+.sort {
+    cursor: pointer;
+
+    svg {
+        width: 14px;
+        height: 14px;
+
+        $scale: 1.2;
+        $offset: 1px;
+        &.up { transform: translateY($offset) scale($scale); }
+        &.down { transform: translateY(-$offset) scale($scale); }
+    }
+
+    $opacity: 0.4;
+    &.up svg.down { opacity: $opacity; }
+    &.down svg.up { opacity: $opacity; }
+
+    &.light svg { opacity: $opacity; }
 }

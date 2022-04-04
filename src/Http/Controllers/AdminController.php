@@ -4,10 +4,13 @@ namespace Advaith\SeamlessAdmin\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Advaith\SeamlessAdmin\ModelResolver;
 
 class AdminController extends Controller
 {
-    private $resolver;
+    private ModelResolver $resolver;
 
     public function __construct()
     {
@@ -17,7 +20,7 @@ class AdminController extends Controller
         $this->resolver = app('modelResolver');
     }
 
-    public function welcome()
+    public function welcome(): View
     {
         return view('seamless::welcome');
     }
@@ -32,15 +35,20 @@ class AdminController extends Controller
         return $type;
     }
 
-    public function index($type)
+    public function index($type): View
     {
         $type = $this->resolveType($type);
 
         $fillable = collect((new $type)->getFillable())->diff((new $type)->getHidden());
 
-        $data = $type::orderBy('id', 'desc')
+        $data = $type::orderBy(request()->by ?? 'id', request()->order ?? 'desc')
+            ->when(request()->q, function ($query) use ($fillable) {
+                $search = request()->q;
+                foreach ($fillable as $column)
+                    $query->orWhere($column, 'like', "%{$search}%");
+            })
             ->select((clone $fillable)->add('id')->toArray())
-            ->paginate(10);
+            ->paginate(request()->perPage ?? 10);
 
         return view('seamless::type.index', [
             'type' => $type,
@@ -49,7 +57,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function show($type, $id)
+    public function show($type, $id): View
     {
         $type = $this->resolveType($type);
 
@@ -67,7 +75,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function create($type)
+    public function create($type): View
     {
         $type = $this->resolveType($type);
 
@@ -77,7 +85,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function store($type, Request $request)
+    public function store($type, Request $request): RedirectResponse | string
     {
         $type = $this->resolveType($type);
 
@@ -91,7 +99,7 @@ class AdminController extends Controller
         }
     }
 
-    public function edit($type, $id)
+    public function edit($type, $id): View
     {
         $type = $this->resolveType($type);
 
@@ -112,7 +120,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function update($type, $id, Request $request)
+    public function update($type, $id, Request $request): RedirectResponse | string
     {
         $type = $this->resolveType($type);
 
@@ -126,7 +134,7 @@ class AdminController extends Controller
         }
     }
 
-    public function delete($type, Request $request)
+    public function delete($type, Request $request): View
     {
         $ids = $request->ids;
 
@@ -138,7 +146,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function destroy($type, Request $request)
+    public function destroy($type, Request $request): RedirectResponse | string
     {
         $type = $this->resolveType($type);
         $ids = $request->ids;

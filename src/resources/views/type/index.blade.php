@@ -1,6 +1,6 @@
 <?php
-    $resolver = app('modelResolver');
-    $name = str(class_basename($type))->plural();
+$resolver = app('modelResolver');
+$name = str(class_basename($type))->plural();
 ?>
 
 @extends('seamless::layout')
@@ -24,60 +24,124 @@
             </a>
         </div>
 
-        <table class="my-4">
-            <thead>
-                <tr>
-                    <th>
-                        <input
-                            type="checkbox"
-                            v-bind:checked="selected.size === {{ count($data) }}"
-                            v-on:click="checkAll({{ $data->pluck('id') }})"
-                        />
-                    </th>
-                    @foreach($fillable as $f)
-                        <th>{{ $f }}</th>
+        <div class="flex justify-between items-center mt-4 mb-2">
+            <form action="{{ route('admin.type.index', request()->type) }}" method="get" class="flex gap-2"
+                  ref="search">
+                <div class="search">
+                    <input
+                        type="text"
+                        placeholder="Search in {{ $fillable->join(', ') }}"
+                        class="input"
+                        name="q"
+                        value="{{ request()->q }}"
+                    />
+                    <div class="icon" v-on:click="$refs.search.submit()">
+                        <i data-feather="search"></i>
+                    </div>
+                </div>
+
+                <select
+                    name="perPage"
+                    id="perPage"
+                    class="input"
+                    v-on:change="$refs.search.submit()"
+                >
+                    @php $values = [5, 10, 20, 50, 100]; @endphp
+                    @foreach($values as $value)
+                        <option
+                            value="{{ $value }}"
+                            {{ $value == request()->perPage ? 'selected' : ($value === 10 ? 'selected' : '') }}
+                        >
+                            {{ $value }}
+                        </option>
                     @endforeach
-                    <th></th>
-                </tr>
+                </select>
+            </form>
+
+            <a
+                v-if="selected.size > 0"
+                v-bind:href="'{{ route('admin.type.delete', request()->type) }}?' + massDeleteURI()"
+                class="btn red"
+            >
+                <i data-feather="trash-2"></i>
+                Delete
+            </a>
+        </div>
+
+        <table class="mb-4">
+            <thead>
+            <tr>
+                <th>
+                    <input
+                        type="checkbox"
+                        v-bind:checked="selected.size === {{ count($data) }}"
+                        v-on:click="checkAll({{ $data->pluck('id') }})"
+                    />
+                </th>
+                @foreach($fillable as $f)
+                    <th>
+                        @php
+                            if (isset(request()->by, request()->order)) {
+                                if (request()->by === $f) $fill = request()->order === 'asc' ? 'up' : 'down';
+                                else $fill = 'light';
+                            }
+                        @endphp
+                        <div
+                            class="flex justify-between items-center sort {{ $fill ?? '' }}"
+                            v-on:click="sort('{{ $f }}', '{{ request()->order }}')"
+                        >
+                            <div>{{ str($f)->ucfirst() }}</div>
+                            <div class="flex flex-col">
+                                <i data-feather="chevron-up" class="up" stroke-width="3"></i>
+                                <i data-feather="chevron-down" class="down" stroke-width="3"></i>
+                            </div>
+                        </div>
+                    </th>
+                @endforeach
+                <th></th>
+            </tr>
             </thead>
 
             <tbody>
-                @forelse($data as $row)
-                    <tr data-link="{{ route('admin.type.show', [request()->type, $row->id]) }}">
-                        <td>
-                            <input
-                                type="checkbox"
-                                v-bind:checked="selected.has({{ $row->id }})"
-                                v-on:change="checkIndividual({{ $row->id }})"
-                            />
-                        </td>
-                        @foreach($fillable as $f)
-                            <td>{{ $row[$f] }}</td>
-                        @endforeach
-                        <td>
-                            <div class="flex gap-2">
-                                <a
-                                    href="{{ route('admin.type.edit', [request()->type, $row->id]) }}"
-                                    class="btn yellow small"
-                                >
-                                    <i data-feather="edit"></i>
-                                    Edit
-                                </a>
-                                <a
-                                    href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->id]]) }}"
-                                    class="btn red small"
-                                >
-                                    <i data-feather="trash-2"></i>
-                                    Delete
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="{{ count($fillable) + 2 }}" class="text-center">No data found</td>
-                    </tr>
-                @endforelse
+            @forelse($data as $row)
+                <tr v-on:click="redirect('{{ route('admin.type.show', [request()->type, $row->id]) }}')">
+                    <td>
+                        <input
+                            type="checkbox"
+                            v-bind:checked="selected.has({{ $row->id }})"
+                            v-on:change="checkIndividual({{ $row->id }})"
+                            v-on:click.stop
+                        />
+                    </td>
+                    @foreach($fillable as $f)
+                        <td>{{ $row[$f] }}</td>
+                    @endforeach
+                    <td>
+                        <div class="flex gap-2">
+                            <a
+                                href="{{ route('admin.type.edit', [request()->type, $row->id]) }}"
+                                class="btn yellow small"
+                                v-on:click.stop
+                            >
+                                <i data-feather="edit"></i>
+                                Edit
+                            </a>
+                            <a
+                                href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->id]]) }}"
+                                class="btn red small"
+                                v-on:click.stop
+                            >
+                                <i data-feather="trash-2"></i>
+                                Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="{{ count($fillable) + 2 }}" class="text-center">No data found</td>
+                </tr>
+            @endforelse
             </tbody>
         </table>
 

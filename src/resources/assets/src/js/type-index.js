@@ -1,18 +1,5 @@
 import { createApp } from 'vue';
 
-document.querySelectorAll('[data-link]').forEach(elem => {
-    elem.addEventListener('click', event => {
-        event.preventDefault();
-        location.href = elem.dataset.link;
-    });
-});
-
-document.querySelectorAll('[data-link] a').forEach(elem => {
-    elem.addEventListener('click', event => {
-        event.stopPropagation();
-    });
-});
-
 createApp({
     data() {
         return {
@@ -27,6 +14,38 @@ createApp({
         checkAll(ids) {
             if (this.selected.size === ids.length) this.selected = new Set;
             else this.selected = new Set(ids)
+        },
+        massDeleteURI() {
+            return encodeURI([...this.selected].map((u, i) => `ids[${i}]=${u}`).join('&'));
+        },
+        redirect(url) {
+            location.href = url;
+        },
+        sort(by, order) {
+            const query = {};
+            decodeURIComponent(location.search)
+                .slice(1)
+                .split('&')
+                .forEach(item => {
+                    if (item === '') return;
+                    const _query = item.split('=');
+                    query[_query[0]] = _query[1];
+                });
+
+            if (by === query['by'] && order === 'desc') {
+                delete query['by'];
+                delete query['order'];
+            } else {
+                if (query['by'] === by) query['order'] = order === 'asc' ? 'desc' : 'asc';
+                else query['order'] = 'asc';
+                query['by'] = by;
+            }
+
+            const array = [];
+            for (const key of Object.keys(query))
+                array.push(`${key}=${query[key]}`);
+
+            location.search = `?${array.join('&')}`;
         }
     }
 }).mount('#app')

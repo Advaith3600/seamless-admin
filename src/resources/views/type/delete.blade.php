@@ -29,8 +29,14 @@ $name = str(class_basename($type))->plural();
                 you are doing before proceeding.</p>
 
             <div class="mt-4 flex justify-end gap-2">
-                <a href="{{ route('admin.type.index', request()->type) }}" class="btn grey">Cancel</a>
-                <button class="btn red" onclick="document.getElementById('del').submit()">Delete</button>
+                <a href="{{ route('admin.type.index', request()->type) }}" class="btn grey">
+                    <i data-feather="x"></i>
+                    Cancel
+                </a>
+                <button class="btn red" onclick="document.getElementById('del').submit()">
+                    <i data-feather="trash-2"></i>
+                    Delete
+                </button>
             </div>
 
             <form action="{{ route('admin.type.destroy', [request()->type, 'ids' => $ids]) }}" method="post" id="del">
