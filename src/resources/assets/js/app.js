@@ -1,15 +1,1 @@
-if (window.hasOwnProperty('feather'))
-    window.feather.replace();
-
-document.querySelectorAll('[data-link]').forEach(elem => {
-    elem.addEventListener('click', event => {
-        event.preventDefault();
-        location.href = elem.dataset.link;
-    });
-});
-
-document.querySelectorAll('[data-link] a').forEach(elem => {
-    elem.addEventListener('click', event => {
-        event.stopPropagation();
-    });
-});
+(()=>{var r,e={726:()=>{window.hasOwnProperty("feather")&&window.feather.replace()},495:()=>{}},a={};function o(r){var n=a[r];if(void 0!==n)return n.exports;var t=a[r]={exports:{}};return e[r](t,t.exports,o),t.exports}o.m=e,r=[],o.O=(e,a,n,t)=>{if(!a){var i=1/0;for(f=0;f<r.length;f++){for(var[a,n,t]=r[f],s=!0,l=0;l<a.length;l++)(!1&t||i>=t)&&Object.keys(o.O).every((r=>o.O[r](a[l])))?a.splice(l--,1):(s=!1,t<i&&(i=t));if(s){r.splice(f--,1);var v=n();void 0!==v&&(e=v)}}return e}t=t||0;for(var f=r.length;f>0&&r[f-1][2]>t;f--)r[f]=r[f-1];r[f]=[a,n,t]},o.o=(r,e)=>Object.prototype.hasOwnProperty.call(r,e),(()=>{var r={773:0,170:0};o.O.j=e=>0===r[e];var e=(e,a)=>{var n,t,[i,s,l]=a,v=0;if(i.some((e=>0!==r[e]))){for(n in s)o.o(s,n)&&(o.m[n]=s[n]);if(l)var f=l(o)}for(e&&e(a);v<i.length;v++)t=i[v],o.o(r,t)&&r[t]&&r[t][0](),r[t]=0;return o.O(f)},a=self.webpackChunkseamless_admin=self.webpackChunkseamless_admin||[];a.forEach(e.bind(null,0)),a.push=e.bind(null,a.push.bind(a))})(),o.O(void 0,[170],(()=>o(726)));var n=o.O(void 0,[170],(()=>o(495)));n=o.O(n)})();

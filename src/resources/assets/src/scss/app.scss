@@ -1,4 +1,6 @@
-@import 'node_modules/normalize.css/normalize';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 // global styles
 body {

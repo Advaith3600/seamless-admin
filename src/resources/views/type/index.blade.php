@@ -7,8 +7,12 @@
 
 @section('title', "Manage $name")
 
+@section('header')
+    <script src="{{ asset('seamless-admin/js/type-index.js') }}" defer></script>
+@endsection
+
 @section('content')
-    <div class="container px-4 py-2">
+    <div class="container px-4 py-2" id="app">
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">
                 Manage {{ $name }}
@@ -20,9 +24,16 @@
             </a>
         </div>
 
-        <table class="mt-4">
+        <table class="my-4">
             <thead>
                 <tr>
+                    <th>
+                        <input
+                            type="checkbox"
+                            v-bind:checked="selected.size === {{ count($data) }}"
+                            v-on:click="checkAll({{ $data->pluck('id') }})"
+                        />
+                    </th>
                     @foreach($fillable as $f)
                         <th>{{ $f }}</th>
                     @endforeach
@@ -33,6 +44,13 @@
             <tbody>
                 @forelse($data as $row)
                     <tr data-link="{{ route('admin.type.show', [request()->type, $row->id]) }}">
+                        <td>
+                            <input
+                                type="checkbox"
+                                v-bind:checked="selected.has({{ $row->id }})"
+                                v-on:change="checkIndividual({{ $row->id }})"
+                            />
+                        </td>
                         @foreach($fillable as $f)
                             <td>{{ $row[$f] }}</td>
                         @endforeach
@@ -45,7 +63,10 @@
                                     <i data-feather="edit"></i>
                                     Edit
                                 </a>
-                                <a href="" class="btn red small">
+                                <a
+                                    href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->id]]) }}"
+                                    class="btn red small"
+                                >
                                     <i data-feather="trash-2"></i>
                                     Delete
                                 </a>
@@ -54,18 +75,12 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ count($fillable) + 1 }}" class="text-center">No data found</td>
+                        <td colspan="{{ count($fillable) + 2 }}" class="text-center">No data found</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
 
-        <div class="flex justify-between items-center">
-            <div></div>
-
-            <div>
-                {{ $data->links() }}
-            </div>
-        </div>
+        {{ $data->links('pagination::tailwind') }}
     </div>
 @endsection

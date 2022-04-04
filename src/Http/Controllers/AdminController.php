@@ -125,4 +125,31 @@ class AdminController extends Controller
             return $exception->getMessage();
         }
     }
+
+    public function delete($type, Request $request)
+    {
+        $ids = $request->ids;
+
+        if (count($ids) === 0) abort(404);
+
+        return view('seamless::type.delete', [
+            'type' => $this->resolveType($type),
+            'ids' => $ids
+        ]);
+    }
+
+    public function destroy($type, Request $request)
+    {
+        $type = $this->resolveType($type);
+        $ids = $request->ids;
+
+        if (count($ids) === 0) abort(404);
+
+        try {
+            $type::whereIn('id', $ids)->delete();
+            return redirect()->route('admin.type.index', request()->type);
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
 }
