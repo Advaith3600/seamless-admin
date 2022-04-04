@@ -11,7 +11,6 @@
                     {{ str(class_basename($model))->plural() }}
                 </a>
             </li>
-
         @empty
             <li class="text-center blank">
                 No tables found.
