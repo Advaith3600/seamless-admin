@@ -20,7 +20,7 @@ $name = str(class_basename($type))->plural();
             <ul class="list-decimal list-inside my-2 ml-4">
                 @foreach($ids as $id)
                     <li>
-                        <span class="opacity-70">{{ $name }} ID</span>:
+                        <span class="opacity-70">{{ $name }} {{ (new $type)->getKeyName() }}</span>:
                         <span class="font-semibold">{{ $id }}</span>
                     </li>
                 @endforeach

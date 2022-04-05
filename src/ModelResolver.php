@@ -7,43 +7,58 @@ use Illuminate\Support\Facades\DB;
 
 class ModelResolver
 {
-    // TODO: Cache the results of models after generating it once
     public array $models = [];
 
     public function __construct()
     {
-        $this->registerModels();
+        $this->registerModels(app_path('models/'));
     }
 
-    private function extract_namespace($file): string
+    private function extract_classname($file): string
     {
-        $ns = NULL;
-        $handle = fopen($file, "r");
-        if ($handle) {
-            while (($line = fgets($handle)) !== false) {
-                if (str_starts_with($line, 'namespace')) {
-                    $parts = explode(' ', $line);
-                    $ns = rtrim(trim($parts[1]), ';');
-                    break;
-                }
-            }
+        $fp = fopen($file, 'r');
+        $class = $namespace = $buffer = '';
+        $i = 0;
+        while (!$class) {
+            if (feof($fp)) break;
 
-            fclose($handle);
+            $buffer .= fread($fp, 512);
+            $tokens = token_get_all($buffer);
+
+            if (!str_contains($buffer, '{')) continue;
+
+            for (; $i < count($tokens); $i++) {
+                if ($tokens[$i][0] === T_NAMESPACE) {
+                    for ($j = $i + 1; $j < count($tokens); $j++) {
+                        if ($tokens[$j][0] === T_NAME_QUALIFIED) $namespace .= '\\' . $tokens[$j][1];
+                        else if ($tokens[$j] === '{' || $tokens[$j] === ';') break;
+                    }
+                }
+
+                if ($tokens[$i][0] === T_CLASS)
+                    for ($j = $i + 1; $j < count($tokens); $j++)
+                        if ($tokens[$j] === '{')
+                            $class = $tokens[$i + 2][1];
+            }
         }
 
-        return $ns;
+        return "{$namespace}\\{$class}";
     }
 
-    private function registerModels(): void
+    private function registerModels(string $path): void
     {
         // iterator
-        $fileSystemIterator = new FilesystemIterator(app_path('models/'));
+        $fileSystemIterator = new FilesystemIterator($path);
 
         // if the trait is registered in a particular model, add it to the models array
         foreach ($fileSystemIterator as $file) {
-            $namespace = $this->extract_namespace($file->getPathname());
-            $basename = pathinfo($file->getBasename(), PATHINFO_FILENAME);
-            $className = "$namespace\\$basename";
+            // recursive call if the file is a directory
+            if ($file->isDir()) {
+                $this->registerModels($file->getPathname());
+                continue;
+            }
+
+            $className = $this->extract_classname($file->getPathname());
 
             if (property_exists($className, 'hasAdminPage'))
                 $this->models[] = $className;
@@ -57,10 +72,10 @@ class ModelResolver
     }
 
     // function resolve the type from md5 string
-    public function resolveType(string $type): string | null
+    public function resolveType(string $type): string|null
     {
         return collect($this->models)
-            ->filter(fn ($model) => md5($model) == $type)
+            ->filter(fn($model) => md5($model) == $type)
             ->first();
     }
 

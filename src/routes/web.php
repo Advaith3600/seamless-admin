@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Advaith\SeamlessAdmin\Http\Controllers\AdminController;
 
-Route::prefix('admin')
+Route::prefix(config('seamless-admin.prefix'))
     ->as('admin.')
     ->middleware('web')
     ->group(function () {

@@ -22,7 +22,8 @@ This will create a `seamless.php` configuration file within your config folder. 
 related to this package.
 
 **Note**: If you find the UI or the admin functionalities are not working properly after a `composer update`, run this
-command again with the flag `--tag="assets"` to republish the assets. This will override the existing assets with the new ones.
+command again with the flag `--tag="assets"` to republish the assets. This will override the existing assets with the
+new ones.
 
 ## Usage
 
@@ -49,4 +50,43 @@ Et Voila! That's all you have to do to get started. Visit `/admin` to access the
 
 ## Configuration
 
-More configuration options will be added soon. For requesting a new feature, create a new issue with the label `feature-request`.
+### `seamless-admin.php` config file
+
+- `prefix`: This option can be set to change the prefix of the admin routes. However, this will not change the name of
+  the route. **Default**: `/admin`
+
+### Model specific configuration
+
+- `protected $primaryKey`: Primary key of the model will be used even if it is not `id` wherever it is needed.
+- `adminIndexFields(): array`: Admin index page will display all the contents of `protected $fillable`
+  excluding `protected $hidden` by default. To override this, use the method `adminIndexFields` and return an array of
+  fields.
+  ```php
+  public function adminIndexFields(): array
+  {
+      return [
+          'title',
+          'content'
+      ];
+  }
+  ```
+- `adminOnCreate(array $fields): array`: Use the method to change the data saved on create. An example is for Users
+  model:
+  ```php
+  public function adminOnCreate(array $fields): array
+  {
+      return [
+          ...$fields,
+          'password' => bcrypt($fields['password'])
+      ];
+  }
+  ```
+- `adminOnEdit(array $fields): array`: Use the method to change the data saved on edit.
+
+#### Hooks
+
+- `public function adminEdited(): void`: This hook is fired when a model is edited
+- `public function adminCreated(): void`: This hook is fired when a model is created
+
+More configuration options will be added soon. For requesting a new feature, create a new issue with the
+label `feature-request`.

@@ -75,7 +75,7 @@ $name = str(class_basename($type))->plural();
                     <input
                         type="checkbox"
                         v-bind:checked="selected.size === {{ count($data) }}"
-                        v-on:click="checkAll({{ $data->pluck('id') }})"
+                        v-on:click="checkAll({{ $data->pluck((new $type)->getKeyName()) }})"
                     />
                 </th>
                 @foreach($fillable as $f)
@@ -104,12 +104,12 @@ $name = str(class_basename($type))->plural();
 
             <tbody>
             @forelse($data as $row)
-                <tr v-on:click="redirect('{{ route('admin.type.show', [request()->type, $row->id]) }}')">
+                <tr v-on:click="redirect('{{ route('admin.type.show', [request()->type, $row->getKey()]) }}')">
                     <td>
                         <input
                             type="checkbox"
-                            v-bind:checked="selected.has({{ $row->id }})"
-                            v-on:change="checkIndividual({{ $row->id }})"
+                            v-bind:checked="selected.has({{ $row->getKey() }})"
+                            v-on:change="checkIndividual({{ $row->getKey() }})"
                             v-on:click.stop
                         />
                     </td>
@@ -119,7 +119,7 @@ $name = str(class_basename($type))->plural();
                     <td>
                         <div class="flex gap-2">
                             <a
-                                href="{{ route('admin.type.edit', [request()->type, $row->id]) }}"
+                                href="{{ route('admin.type.edit', [request()->type, $row->getKey()]) }}"
                                 class="btn yellow small"
                                 v-on:click.stop
                             >
@@ -127,7 +127,7 @@ $name = str(class_basename($type))->plural();
                                 Edit
                             </a>
                             <a
-                                href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->id]]) }}"
+                                href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->getKey()]]) }}"
                                 class="btn red small"
                                 v-on:click.stop
                             >

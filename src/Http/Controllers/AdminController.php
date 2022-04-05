@@ -38,16 +38,17 @@ class AdminController extends Controller
     public function index($type): View
     {
         $type = $this->resolveType($type);
+        $instance = new $type;
 
-        $fillable = collect((new $type)->getFillable())->diff((new $type)->getHidden());
+        $fillable = collect($instance->adminIndexFields());
 
-        $data = $type::orderBy(request()->by ?? 'id', request()->order ?? 'desc')
+        $data = $type::orderBy(request()->by ?? $instance->getKeyName(), request()->order ?? 'desc')
             ->when(request()->q, function ($query) use ($fillable) {
                 $search = request()->q;
                 foreach ($fillable as $column)
                     $query->orWhere($column, 'like', "%{$search}%");
             })
-            ->select((clone $fillable)->add('id')->toArray())
+            ->select((clone $fillable)->add($instance->getKeyName())->toArray())
             ->paginate(request()->perPage ?? 10);
 
         return view('seamless::type.index', [
@@ -60,11 +61,12 @@ class AdminController extends Controller
     public function show($type, $id): View
     {
         $type = $this->resolveType($type);
+        $instance = new $type;
 
-        $fillable = collect((new $type)->getFillable())
-            ->merge((new $type)->getHidden())
+        $fillable = collect($instance->getFillable())
+            ->merge($instance->getHidden())
             ->unique()
-            ->add('id')
+            ->add($instance->getKeyName())
             ->toArray();
 
         $data = $type::find($id, $fillable);
@@ -92,8 +94,10 @@ class AdminController extends Controller
         $columns = collect($this->resolver->getColumns($type));
 
         try {
-            $data = $type::create($request->only($columns->pluck('Field')->toArray()));
-            return redirect()->route('admin.type.show', [request()->type, $data->id]);
+            $fields = (new $type)->adminOnCreate($request->only($columns->pluck('Field')->toArray()));
+            $data = $type::create($fields);
+            $data->adminCreated();
+            return redirect()->route('admin.type.show', [request()->type, $data->getKey()]);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -109,7 +113,7 @@ class AdminController extends Controller
             $id,
             (clone $columns)
                 ->map(fn ($f) => $f->Field)
-                ->add('id')
+                ->add((new $type)->getKeyName())
                 ->toArray()
         );
 
@@ -127,8 +131,11 @@ class AdminController extends Controller
         $columns = collect($this->resolver->getColumns($type));
 
         try {
-            $data = $type::find($id)->update($request->only($columns->pluck('Field')->toArray()));
-            return redirect()->route('admin.type.show', [request()->type, $data->id]);
+            $item = $type::find($id);
+            $fields = $item->adminOnEdit($request->only($columns->pluck('Field')->toArray()));
+            $item->update($fields);
+            $item->adminEdited();
+            return redirect()->route('admin.type.show', [request()->type, $item->getKey()]);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -154,7 +161,7 @@ class AdminController extends Controller
         if (count($ids) === 0) abort(404);
 
         try {
-            $type::whereIn('id', $ids)->delete();
+            $type::whereIn((new $type)->getKeyName(), $ids)->delete();
             return redirect()->route('admin.type.index', request()->type);
         } catch (Exception $exception) {
             return $exception->getMessage();
