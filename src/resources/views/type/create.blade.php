@@ -1,7 +1,4 @@
-<?php
-    $resolver = app('modelResolver');
-    $name = class_basename($type);
-?>
+@php $name = class_basename($type); @endphp
 
 @extends('seamless::layout')
 
@@ -18,22 +15,7 @@
 
             <div class="grid grid-cols-2 gap-2">
                 @foreach($columns as $column)
-                    <div class="flex flex-col">
-                        <label
-                            for="{{ $column->Field }}"
-                            class="mb-1 font-semibold"
-                        >
-                            {{ str($column->Field)->ucfirst() }}
-                        </label>
-
-                        <input
-                            type="text"
-                            id="{{ $column->Field }}"
-                            name="{{ $column->Field }}"
-                            class="input"
-                            placeholder="{{ $column->Type }}"
-                        />
-                    </div>
+                    @include('seamless::partials.field-renderer')
                 @endforeach
             </div>
 

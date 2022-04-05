@@ -1,7 +1,4 @@
-<?php
-$resolver = app('modelResolver');
-$name = str(class_basename($type))->plural();
-?>
+@php $name = str(class_basename($type))->plural(); @endphp
 
 @extends('seamless::layout')
 

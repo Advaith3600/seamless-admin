@@ -1,7 +1,4 @@
-<?php
-    $resolver = app('modelResolver');
-    $name = class_basename($type);
-?>
+@php $name = class_basename($type); @endphp
 
 @extends('seamless::layout')
 
