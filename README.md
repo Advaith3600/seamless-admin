@@ -53,35 +53,98 @@ Et Voila! That's all you have to do to get started. Visit `/admin` to access the
 ### `seamless-admin.php` config file
 
 - `prefix`: This option can be set to change the prefix of the admin routes. However, this will not change the name of
-  the route. **Default**: `/admin`
+  the route. By default, `/admin` will be used as the prefix
+- `middleware`: Global middleware for the admin routes. By default, the auth middleware is set. 
 
 ### Model specific configuration
 
+All the model specific configuration should go inside the respective model file.
+
+#### Properties
+
 - `protected $primaryKey`: Primary key of the model will be used even if it is not `id` wherever it is needed.
-- `adminIndexFields(): array`: Admin index page will display all the contents of `protected $fillable`
-  excluding `protected $hidden` by default. To override this, use the method `adminIndexFields` and return an array of
-  fields.
-  ```php
-  public function adminIndexFields(): array
-  {
-      return [
-          'title',
-          'content'
-      ];
-  }
-  ```
-- `adminOnCreate(array $fields): array`: Use the method to change the data saved on create. An example is for Users
-  model:
-  ```php
-  public function adminOnCreate(array $fields): array
-  {
-      return [
-          ...$fields,
-          'password' => bcrypt($fields['password'])
-      ];
-  }
-  ```
-- `adminOnEdit(array $fields): array`: Use the method to change the data saved on edit.
+
+#### Methods
+
+```php
+public function adminIndexFields(): array
+```
+
+Admin index page will display all the contents of `protected $fillable`
+excluding `protected $hidden` by default. To override this, use the method `adminIndexFields` and return an array of
+fields.
+
+```php
+public function adminIndexFields(): array
+{
+    return [
+        'title',
+        'content'
+    ];
+}
+```
+
+---
+
+```php
+public function adminOnCreate(array $fields): array
+```
+
+Use the method to change the data saved on create. An example is for Users model:
+
+```php
+public function adminOnCreate(array $fields): array
+{
+    return [
+        ...$fields,
+        'password' => bcrypt($fields['password'])
+    ];
+}
+```
+
+This method can also be used as a hook as it fires just before the entry is created.
+
+---
+
+```php
+public function adminOnEdit(array $fields): array
+```
+
+Use the method to change the data saved on edit. It functions similar to the `adminOnCreate` method.
+
+---
+
+```php
+public function adminCanAccessIndex(): bool
+```
+
+Determine whether the logged-in user has the privilege to access the model data.
+Disabling access to index page will remove access to all the functionalities (view, create, edit, delete) for the current user.
+
+---
+
+```php
+public function adminCanAccessCreate(): bool
+```
+
+Determine whether the logged-in user has the privilege to create a new entry.
+
+---
+
+```php
+public function adminCanAccessEdit(): bool
+```
+
+Determine whether the logged-in user has the privilege to edit an entry from the database.
+
+---
+
+```php
+public function adminCanAccessDelete(): bool
+```
+
+Determine whether the logged-in user has the privilege to delete data from the database.
+
 
 #### Hooks
 

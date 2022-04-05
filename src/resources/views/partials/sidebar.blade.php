@@ -1,8 +1,11 @@
-<?php $resolver = app('modelResolver'); ?>
+@php
+    $resolver = app('modelResolver');
+    $models = array_filter($resolver->models, fn($model) => (new $model)->adminCanAccessIndex());
+@endphp
 
 <aside id="sidebar">
     <ul>
-        @forelse ($resolver->models as $model)
+        @forelse ($models as $model)
             <li>
                 <a
                     href="{{ route('admin.type.index', $resolver->parseType($model) ) }}"

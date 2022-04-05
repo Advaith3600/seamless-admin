@@ -15,7 +15,7 @@ class AdminController extends Controller
     public function __construct()
     {
         // only authenticated users will be able to use the admin panel
-        $this->middleware('auth');
+        $this->middleware(config('seamless-admin.middleware'));
 
         $this->resolver = app('modelResolver');
     }
@@ -35,9 +35,20 @@ class AdminController extends Controller
         return $type;
     }
 
+    private function hasPrivilege(string $type, string $for): void
+    {
+        if ($for !== 'Index') $this->hasPrivilege($type, 'Index');
+
+        $method = "adminCanAccess{$for}";
+
+        // show 403, unauthorized user screen if the user doesn't have the privilege
+        if (!(new $type)->$method()) abort(403);
+    }
+
     public function index($type): View
     {
         $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Index');
         $instance = new $type;
 
         $fillable = collect($instance->adminIndexFields());
@@ -61,6 +72,7 @@ class AdminController extends Controller
     public function show($type, $id): View
     {
         $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Index');
         $instance = new $type;
 
         $fillable = collect($instance->getFillable())
@@ -80,6 +92,7 @@ class AdminController extends Controller
     public function create($type): View
     {
         $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Create');
 
         return view('seamless::type.create', [
             'type' => $type,
@@ -90,6 +103,7 @@ class AdminController extends Controller
     public function store($type, Request $request): RedirectResponse | string
     {
         $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Create');
 
         $columns = collect($this->resolver->getColumns($type));
 
@@ -106,6 +120,7 @@ class AdminController extends Controller
     public function edit($type, $id): View
     {
         $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Edit');
 
         $columns = collect($this->resolver->getColumns($type));
 
@@ -127,6 +142,7 @@ class AdminController extends Controller
     public function update($type, $id, Request $request): RedirectResponse | string
     {
         $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Edit');
 
         $columns = collect($this->resolver->getColumns($type));
 
@@ -143,12 +159,14 @@ class AdminController extends Controller
 
     public function delete($type, Request $request): View
     {
+        $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Delete');
         $ids = $request->ids;
 
         if (count($ids) === 0) abort(404);
 
         return view('seamless::type.delete', [
-            'type' => $this->resolveType($type),
+            'type' => $type,
             'ids' => $ids
         ]);
     }
@@ -156,6 +174,7 @@ class AdminController extends Controller
     public function destroy($type, Request $request): RedirectResponse | string
     {
         $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Delete');
         $ids = $request->ids;
 
         if (count($ids) === 0) abort(404);

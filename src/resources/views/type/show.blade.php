@@ -1,4 +1,7 @@
-@php $name = class_basename($type); @endphp
+@php
+    $name = class_basename($type);
+    $instance = new $type;
+@endphp
 
 @extends('seamless::layout')
 
@@ -13,7 +16,7 @@
         <div class="mt-4 grid grid-cols-1 gap-1">
             @foreach($data->toArray() as $key => $column)
                 <div class="flex">
-                    <div class="opacity-60 mr-2">{{ str($key)->ucfirst() }}: </div>
+                    <div class="opacity-60 mr-2">{{ str($key)->ucfirst() }}:</div>
                     <div>{{ $column }}</div>
                 </div>
             @endforeach
@@ -25,15 +28,19 @@
                 Go Back
             </a>
 
-            <a href="{{ route('admin.type.edit', [request()->type, request()->id]) }}" class="btn yellow">
-                <i data-feather="edit"></i>
-                Edit
-            </a>
+            @if($instance->adminCanAccessEdit())
+                <a href="{{ route('admin.type.edit', [request()->type, request()->id]) }}" class="btn yellow">
+                    <i data-feather="edit"></i>
+                    Edit
+                </a>
+            @endif
 
-            <a href="{{ route('admin.type.delete', [request()->type, 'ids' => [request()->id]]) }}" class="btn red">
-                <i data-feather="trash-2"></i>
-                Delete
-            </a>
+            @if($instance->adminCanAccessDelete())
+                <a href="{{ route('admin.type.delete', [request()->type, 'ids' => [request()->id]]) }}" class="btn red">
+                    <i data-feather="trash-2"></i>
+                    Delete
+                </a>
+            @endif
         </div>
     </div>
 @endsection

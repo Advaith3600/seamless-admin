@@ -1,4 +1,7 @@
-@php $name = str(class_basename($type))->plural(); @endphp
+@php
+    $name = str(class_basename($type))->plural();
+    $instance = new $type;
+@endphp
 
 @extends('seamless::layout')
 
@@ -15,10 +18,12 @@
                 Manage {{ $name }}
             </h2>
 
-            <a class="btn" href="{{ route('admin.type.create', request()->type) }}">
-                <i data-feather="plus"></i>
-                Create
-            </a>
+            @if($instance->adminCanAccessCreate())
+                <a class="btn" href="{{ route('admin.type.create', request()->type) }}">
+                    <i data-feather="plus"></i>
+                    Create
+                </a>
+            @endif
         </div>
 
         <div class="flex justify-between items-center mt-4 mb-2">
@@ -56,7 +61,8 @@
             </form>
 
             <a
-                v-if="selected.size > 0"
+                v-cloak
+                v-if="selected.size > 0 && {{ $instance->adminCanAccessDelete() ? 'true' : 'false' }}"
                 v-bind:href="'{{ route('admin.type.delete', request()->type) }}?' + massDeleteURI()"
                 class="btn red"
             >
@@ -72,7 +78,7 @@
                     <input
                         type="checkbox"
                         v-bind:checked="selected.size === {{ count($data) }}"
-                        v-on:click="checkAll({{ $data->pluck((new $type)->getKeyName()) }})"
+                        v-on:click="checkAll({{ $data->pluck($instance->getKeyName()) }})"
                     />
                 </th>
                 @foreach($fillable as $f)
@@ -115,22 +121,26 @@
                     @endforeach
                     <td>
                         <div class="flex gap-2">
-                            <a
-                                href="{{ route('admin.type.edit', [request()->type, $row->getKey()]) }}"
-                                class="btn yellow small"
-                                v-on:click.stop
-                            >
-                                <i data-feather="edit"></i>
-                                Edit
-                            </a>
-                            <a
-                                href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->getKey()]]) }}"
-                                class="btn red small"
-                                v-on:click.stop
-                            >
-                                <i data-feather="trash-2"></i>
-                                Delete
-                            </a>
+                            @if($instance->adminCanAccessEdit())
+                                <a
+                                    href="{{ route('admin.type.edit', [request()->type, $row->getKey()]) }}"
+                                    class="btn yellow small"
+                                    v-on:click.stop
+                                >
+                                    <i data-feather="edit"></i>
+                                    Edit
+                                </a>
+                            @endif
+                            @if($instance->adminCanAccessDelete())
+                                <a
+                                    href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->getKey()]]) }}"
+                                    class="btn red small"
+                                    v-on:click.stop
+                                >
+                                    <i data-feather="trash-2"></i>
+                                    Delete
+                                </a>
+                            @endif
                         </div>
                     </td>
                 </tr>
