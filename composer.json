@@ -23,7 +23,10 @@
         "laravel": {
             "providers": [
                 "Advaith\\SeamlessAdmin\\SeamlessAdminServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "SeamlessAdmin": "Advaith\\SeamlessAdmin\\SeamlessAdmin"
+            }
         }
     }
 }

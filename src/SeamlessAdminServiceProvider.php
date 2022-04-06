@@ -13,8 +13,9 @@ class SeamlessAdminServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // registering singleton
+        // registering services in the container
         $this->app->singleton('modelResolver', fn($app) => new ModelResolver());
+        $this->app->singleton('seamlessAdmin', fn($app) => new SeamlessAdmin());
 
         // registering routes
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class ModelResolver
 {
-    public array $models = [];
+    private array $models = [];
 
     public function __construct()
     {
@@ -84,5 +84,11 @@ class ModelResolver
     {
         $table = (new $type)->getTable();
         return DB::select("SHOW COLUMNS FROM $table WHERE type != 'timestamp' AND extra != 'auto_increment'");
+    }
+
+    // get the models registered
+    public function getModels(): array
+    {
+        return $this->models;
     }
 }

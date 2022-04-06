@@ -4,10 +4,10 @@ namespace Advaith\SeamlessAdmin\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class ModelResolver extends Facade
+class SeamlessAdmin extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'modelResolver';
+        return 'seamlessAdmin';
     }
 }

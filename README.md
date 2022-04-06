@@ -54,7 +54,7 @@ Et Voila! That's all you have to do to get started. Visit `/admin` to access the
 
 - `prefix`: This option can be set to change the prefix of the admin routes. However, this will not change the name of
   the route. By default, `/admin` will be used as the prefix
-- `middleware`: Global middleware for the admin routes. By default, the auth middleware is set. 
+- `middleware`: Global middleware for the admin routes. By default, the auth middleware is set.
 
 ### Model specific configuration
 
@@ -118,8 +118,8 @@ Use the method to change the data saved on edit. It functions similar to the `ad
 public function adminCanAccessIndex(): bool
 ```
 
-Determine whether the logged-in user has the privilege to access the model data.
-Disabling access to index page will remove access to all the functionalities (view, create, edit, delete) for the current user.
+Determine whether the logged-in user has the privilege to access the model data. Disabling access to index page will
+remove access to all the functionalities (view, create, edit, delete) for the current user.
 
 ---
 
@@ -145,11 +145,62 @@ public function adminCanAccessDelete(): bool
 
 Determine whether the logged-in user has the privilege to delete data from the database.
 
-
 #### Hooks
 
 - `public function adminEdited(): void`: This hook is fired when a model is edited
 - `public function adminCreated(): void`: This hook is fired when a model is created
+
+### Adding a custom page
+
+To add a custom page to the sidebar use the `SeamlessAdmin` Facade in your application's `AppServiceProvider`. Example:
+
+```php
+<?php
+
+namespace App\Providers;
+
+use Advaith\SeamlessAdmin\Facades\SeamlessAdmin;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    ...
+    public function boot()
+    {
+        SeamlessAdmin::add('route-name', 'Alias', fn() => true);
+    }
+}
+```
+
+The `add` method takes 3 arguments:
+
+1. The route name. This is the route name that you have defined in your routes file. Note: This is not url itself but
+   instead the name of the route.
+2. Alias for the route. This is the name that will be displayed in the sidebar of the admin page.
+3. An optional callable. This callable is optional and it determines whether the route should be shown in the sidebar.
+   This is useful when you have to hide the page for certain users.
+
+To fully utilize the custom page, extend the layout `seamless::layout` in your blade file. Exmaple:
+
+```php
+@extends('seamless::layout')
+
+@section('title', 'Title')
+
+@section('header')
+    <!-- This section will be appened to the header -->
+@endsection
+
+@section('content')
+    <div class="container px-4 py-2">
+        The actual content here
+    </div>
+@endsection
+
+@section('footer')
+    <!-- This section will be added to the bottom of the page -->
+@endsection
+```
 
 More configuration options will be added soon. For requesting a new feature, create a new issue with the
 label `feature-request`.
