@@ -8,13 +8,13 @@ class SeamlessAdmin
 
     public function add(string $name, string $alias, callable $isAllowed = null): SeamlessAdmin
     {
-        if (is_null($isAllowed) || $isAllowed()) $this->routes[] = [$name, $alias];
+        $this->routes[] = [$name, $alias, $isAllowed];
 
         return $this;
     }
 
     public function getRoutes(): array
     {
-        return $this->routes;
+        return array_filter($this->routes, fn($route) => is_null($route[2]) || $route[2]());
     }
 }

@@ -58,6 +58,9 @@ class ModelResolver
                 continue;
             }
 
+            // only parse .php files
+            if ($file->getExtension() !== 'php') continue;
+
             $className = $this->extract_classname($file->getPathname());
 
             if (property_exists($className, 'hasAdminPage'))
