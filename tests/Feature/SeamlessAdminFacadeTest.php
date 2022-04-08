@@ -5,12 +5,12 @@ namespace Advaith\SeamlessAdmin\Tests\Feature;
 use Advaith\SeamlessAdmin\Tests\TestCase;
 use Advaith\SeamlessAdmin\Facades\SeamlessAdmin;
 
+/**
+ * Check whether the SeamlessAdmin Facade can add custom routes properly
+ */
 class SeamlessAdminFacadeTest extends TestCase
 {
     private int $count = 0;
-    /**
-     * Check whether the SeamlessAdmin Facade can add custom routes properly
-     */
 
     public function test_whether_seamlessAdmin_facade_is_empty_default()
     {
@@ -31,7 +31,7 @@ class SeamlessAdminFacadeTest extends TestCase
 
     public function test_seamlessAdmin_facade_after_optional_false_entry()
     {
-        SeamlessAdmin::add('route-name-2', 'Alias', fn() => false);
+        SeamlessAdmin::add('route-name-3', 'Alias', fn() => false);
         $this->assertCount($this->count, SeamlessAdmin::getRoutes());
     }
 }

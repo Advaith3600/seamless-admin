@@ -3,7 +3,8 @@
 A seamless Django-like admin panel setup for Laravel. Simple, non-cms table manager for admins.
 
 [![Latest Stable Version](http://poser.pugx.org/advaith/seamless-admin/v)](https://packagist.org/packages/advaith/seamless-admin)
-[![License](http://poser.pugx.org/advaith/seamless-admin/license)](https://packagist.org/packages/advaith/seamless-admin) 
+[![License](http://poser.pugx.org/advaith/seamless-admin/license)](https://packagist.org/packages/advaith/seamless-admin)
+![Tests](https://github.com/advaith3600/seamless-admin/actions/workflows/run-tests.yml/badge.svg?branch=main)
 
 ## Installation steps
 
