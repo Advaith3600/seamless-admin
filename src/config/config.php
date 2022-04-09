@@ -9,5 +9,8 @@ return [
     // middleware for the routes group
     'middleware' => ['auth'],
     // middleware for api routes group
-    'api_middleware' => ['auth']
+    'api_middleware' => ['auth'],
+
+    // layout to be used by all the views
+    'layout' => 'seamless::layout',
 ];

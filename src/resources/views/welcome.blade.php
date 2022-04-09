@@ -1,4 +1,4 @@
-@extends('seamless::layout')
+@extends(config('seamless-admin.layout'))
 
 @section('content')
     <div class="text-center my-8">

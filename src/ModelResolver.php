@@ -96,7 +96,13 @@ class ModelResolver
     // get the models registered
     public function getModels(): array
     {
-        return array_filter($this->models, fn($model) => (new $model)->hasAdminPage !== false);
+        return array_filter(
+            $this->models,
+            function ($model) {
+                $instance = new $model;
+                return $instance->hasAdminPage !== false && $instance->adminCanAccessIndex();
+            }
+        );
     }
 
     // function to get column information from the table

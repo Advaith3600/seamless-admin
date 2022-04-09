@@ -1,11 +1,11 @@
 @php $name = str(class_basename($type))->plural(); @endphp
 
-@extends('seamless::layout')
+@extends(config('seamless-admin.layout'))
 
 @section('title', "Delete $name")
 
 @section('content')
-    <div class="container px-4 py-2" id="app">
+    <div class="container mx-auto px-4 py-2" id="app">
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">
                 Delete {{ $name }}

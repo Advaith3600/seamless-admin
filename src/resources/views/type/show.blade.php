@@ -3,12 +3,12 @@
     $instance = new $type;
 @endphp
 
-@extends('seamless::layout')
+@extends(config('seamless-admin.layout'))
 
 @section('title', "$name")
 
 @section('content')
-    <div class="container px-4 py-2">
+    <div class="container mx-auto px-4 py-2">
         <h2 class="text-2xl font-semibold">
             {{ $name }}
         </h2>

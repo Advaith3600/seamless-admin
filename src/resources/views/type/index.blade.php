@@ -3,7 +3,7 @@
     $instance = new $type;
 @endphp
 
-@extends('seamless::layout')
+@extends(config('seamless-admin.layout'))
 
 @section('title', "Manage $name")
 
@@ -12,7 +12,7 @@
 @endsection
 
 @section('content')
-    <div class="container px-4 py-2" id="app">
+    <div class="container mx-auto px-4 py-2" id="app">
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">
                 Manage {{ $name }}
@@ -120,11 +120,11 @@
                         <td>{{ $row[$f] }}</td>
                     @endforeach
                     <td>
-                        <div class="flex gap-2">
+                        <div class="flex gap-3">
                             @if($instance->adminCanAccessEdit())
                                 <a
                                     href="{{ route('admin.type.edit', [request()->type, $row->getKey()]) }}"
-                                    class="btn yellow small"
+                                    class="btn yellow small link"
                                     v-on:click.stop
                                 >
                                     <i data-feather="edit"></i>
@@ -134,7 +134,7 @@
                             @if($instance->adminCanAccessDelete())
                                 <a
                                     href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->getKey()]]) }}"
-                                    class="btn red small"
+                                    class="btn red small link"
                                     v-on:click.stop
                                 >
                                     <i data-feather="trash-2"></i>

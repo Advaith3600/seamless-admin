@@ -1,4 +1,4 @@
-$green: #20a056;
+$green: #4E9F3D;
 $grey: #444;
 $yellow: #e4cf1b;
 $red: #cc2626;
@@ -9,6 +9,19 @@ $border-radius: 6px;
         background: $color;
         color: $font;
         &:hover, &:focus { background: darken($color, 10%); }
+    }
+}
+
+@mixin link-variant($color, $name) {
+    &.#{$name} {
+        background: transparent;
+        color: $color;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom-color 150ms;
+        padding: 1px;
+        border-radius: 0;
+
+        &:hover { border-bottom-color: $color; }
     }
 }
 
@@ -37,7 +50,12 @@ $border-radius: 6px;
     @include variant($yellow, 'yellow', #333);
     @include variant($red, 'red');
 
-    &.small { font-size: 0.8rem; }
+    &.link {
+        @include link-variant(#615803, 'yellow');
+        @include link-variant($red, 'red');
+    }
+
+    &.small { font-size: 0.9rem; }
 }
 
 .input {
@@ -51,10 +69,11 @@ $border-radius: 6px;
 
 .table {
     width: 100%;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     text-align: left;
     border-radius: $border-radius;
     overflow: hidden;
+    white-space: nowrap;
 
     tr td {
         background: #f6f6f6;
@@ -67,7 +86,7 @@ $border-radius: 6px;
     thead tr th {
         font-weight: 900;
         color: #ffffff;
-        background: #27ae60;
+        background: $green;
     }
 
     th, td {

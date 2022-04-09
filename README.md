@@ -50,7 +50,7 @@ class Post extends Model
 
 Et Voila! That's all you have to do to get started. Visit `/admin` to access the admin dashboard after logging in.
 
-![](Screenshot.png)
+![Screenshot](Screenshot.png)
 
 ## Configuration
 
@@ -61,6 +61,7 @@ Et Voila! That's all you have to do to get started. Visit `/admin` to access the
 - `api_prefix`: Change the prefix for api routes.
 - `middleware`: Global middleware for the admin routes. By default, the auth middleware is set.
 - `api_middleware`: Middleware group for api routes.
+- `layout`: You can customize the layout that the admin pages use by changing this option. Make sure that you yield appropriately to include dynamic contents.
 
 ### Model specific configuration
 

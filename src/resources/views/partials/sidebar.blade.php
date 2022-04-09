@@ -1,6 +1,6 @@
 @php
     $resolver = app('modelResolver');
-    $models = array_filter($resolver->getModels(), fn($model) => (new $model)->adminCanAccessIndex());
+    $models = $resolver->getModels();
     $routes = app('seamlessAdmin')->getRoutes();
 @endphp
 

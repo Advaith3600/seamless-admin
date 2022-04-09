@@ -1,6 +1,6 @@
 @php $name = class_basename($type); @endphp
 
-@extends('seamless::layout')
+@extends(config('seamless-admin.layout'))
 
 @section('title', "Create $name")
 
@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-    <div class="container px-4 py-2" id="app">
+    <div class="container mx-auto px-4 py-2" id="app">
         <h2 class="text-2xl font-semibold">
             Create {{ $name }}
         </h2>
