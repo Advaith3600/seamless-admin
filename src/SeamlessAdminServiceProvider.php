@@ -19,6 +19,7 @@ class SeamlessAdminServiceProvider extends ServiceProvider
 
         // registering routes
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/routes/api.php');
 
         // registering views
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'seamless');

@@ -56,9 +56,11 @@ Et Voila! That's all you have to do to get started. Visit `/admin` to access the
 
 ### `seamless-admin.php` config file
 
-- `prefix`: This option can be set to change the prefix of the admin routes. However, this will not change the name of
-  the route. By default, `/admin` will be used as the prefix
+- `prefix`: Change the prefix of the admin routes. However, this will not change the name of the route. By
+  default, `/admin` will be used as the prefix
+- `api_prefix`: Change the prefix for api routes.
 - `middleware`: Global middleware for the admin routes. By default, the auth middleware is set.
+- `api_middleware`: Middleware group for api routes.
 
 ### Model specific configuration
 
@@ -66,7 +68,12 @@ All the model specific configuration should go inside the respective model file.
 
 #### Properties
 
+- `public bool $hasAdminPage`: Set this to `false` to prevent the model from showing up on the admin page. Advantage of
+  using this instead of removing the trait from the model is when other models try to check for foreign keys this will
+  be used as a hint to fetch other columns.
 - `protected $primaryKey`: Primary key of the model will be used even if it is not `id` wherever it is needed.
+- `protected $fillable`: `adminIndexFields` uses data from the `$fillable` and `$hidden` variable to show default values
+- `protected $hidden`: `adminIndexFields` uses data from the `$hidden` and `$hidden` variable to show default values
 
 #### Methods
 
@@ -148,6 +155,21 @@ public function adminCanAccessDelete(): bool
 ```
 
 Determine whether the logged-in user has the privilege to delete data from the database.
+
+---
+
+```php
+public function __toString(): string
+```
+
+A magic method to convert the model instance into a string. By default, the field from `$fillable` is used. Usage example:
+
+```php
+public function __toString(): string
+{
+    return "{$this->firstName} {$this->lastName}";
+}
+```
 
 #### Hooks
 

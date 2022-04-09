@@ -3,7 +3,11 @@
 return [
     // Prefix for admin routes
     'prefix' => 'admin',
+    // Prefix for api routes
+    'api_prefix' => 'api/admin',
 
     // middleware for the routes group
-    'middleware' => ['auth']
+    'middleware' => ['auth'],
+    // middleware for api routes group
+    'api_middleware' => ['auth']
 ];

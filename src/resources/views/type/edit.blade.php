@@ -4,8 +4,12 @@
 
 @section('title', "Edit $name")
 
+@section('header')
+    <script src="{{ asset('seamless-admin/js/foreign-selection.js') }}" defer></script>
+@endsection
+
 @section('content')
-    <div class="container px-4 py-2">
+    <div class="container px-4 py-2" id="app">
         <h2 class="text-2xl font-semibold">
             Edit {{ $name }}
         </h2>

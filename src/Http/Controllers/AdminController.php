@@ -6,18 +6,15 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Advaith\SeamlessAdmin\ModelResolver;
 
 class AdminController extends Controller
 {
-    private ModelResolver $resolver;
-
     public function __construct()
     {
+        parent::__construct();
+
         // only authenticated users will be able to use the admin panel
         $this->middleware(config('seamless-admin.middleware'));
-
-        $this->resolver = app('modelResolver');
     }
 
     public function welcome(): View
@@ -25,24 +22,17 @@ class AdminController extends Controller
         return view('seamless::welcome');
     }
 
-    private function resolveType(string $type): string
+    private function wrap_foreign_columns(string $type, array $columns): array
     {
-        $type = $this->resolver->resolveType($type);
+        $foreign_keys = collect($this->resolver->foreign_keys($type));
 
-        // show 404 error page if type is not found
-        if (!$type) abort(404);
+        return array_map(function ($column) use ($foreign_keys) {
+            $column->Foreign = $foreign_keys
+                ->filter(fn ($key) => $key->COLUMN_NAME === $column->Field)
+                ->first();
 
-        return $type;
-    }
-
-    private function hasPrivilege(string $type, string $for): void
-    {
-        if ($for !== 'Index') $this->hasPrivilege($type, 'Index');
-
-        $method = "adminCanAccess{$for}";
-
-        // show 403, unauthorized user screen if the user doesn't have the privilege
-        if (!(new $type)->$method()) abort(403);
+            return $column;
+        }, $columns);
     }
 
     public function index($type): View
@@ -96,7 +86,10 @@ class AdminController extends Controller
 
         return view('seamless::type.create', [
             'type' => $type,
-            'columns' => $this->resolver->getColumns($type)
+            'columns' => $this->wrap_foreign_columns(
+                $type,
+                $this->resolver->getColumns($type)
+            )
         ]);
     }
 
@@ -134,8 +127,8 @@ class AdminController extends Controller
 
         return view('seamless::type.edit', [
             'type' => $type,
-            'columns' => $columns,
-            'data' => $data
+            'data' => $data,
+            'columns' => $this->wrap_foreign_columns($type, $columns->toArray())
         ]);
     }
 

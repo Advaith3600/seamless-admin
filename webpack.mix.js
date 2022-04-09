@@ -8,6 +8,7 @@ mix
     .sass(resolveEntry('scss/app.scss'), 'css')
     .js(resolveEntry('js/app.js'), resolveOutput('js'))
     .js(resolveEntry('js/type-index.js'), resolveOutput('js'))
+    .js(resolveEntry('js/foreign-selection.js'), resolveOutput('js'))
     .vue()
     .options({
         postCss: [ tailwindcss('./tailwind.config.js') ],

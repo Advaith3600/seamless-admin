@@ -17,8 +17,9 @@
             <ul class="list-decimal list-inside my-2 ml-4">
                 @foreach($ids as $id)
                     <li>
-                        <span class="opacity-70">{{ $name }} {{ (new $type)->getKeyName() }}</span>:
-                        <span class="font-semibold">{{ $id }}</span>
+                        <span class="opacity-70">{{ str((new $type)->getKeyName())->upper() }}</span>:
+                        <span class="font-semibold mr-2">{{ $id }}</span>
+                        <span>{{ str($type::find($id)) }}</span>
                     </li>
                 @endforeach
             </ul>

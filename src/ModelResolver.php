@@ -63,8 +63,11 @@ class ModelResolver
 
             $className = $this->extract_classname($file->getPathname());
 
-            if (property_exists($className, 'hasAdminPage'))
-                $this->models[] = $className;
+            if (in_array(
+                \Advaith\SeamlessAdmin\Traits\SeamlessAdmin::class,
+                class_uses_recursive($className),
+                true
+            )) $this->models[] = $className;
         }
     }
 
@@ -82,16 +85,46 @@ class ModelResolver
             ->first();
     }
 
-    // function to get column information from the table
-    public function getColumns(string $type): array
+    // resolve model from table name if exists
+    public function resolveModel(string $table): string|null
     {
-        $table = (new $type)->getTable();
-        return DB::select("SHOW COLUMNS FROM $table WHERE type != 'timestamp' AND extra != 'auto_increment'");
+        return collect($this->models)
+            ->filter(fn($model) => (new $model)->getTable() === $table)
+            ->first();
     }
 
     // get the models registered
     public function getModels(): array
     {
-        return $this->models;
+        return array_filter($this->models, fn($model) => (new $model)->hasAdminPage !== false);
+    }
+
+    // function to get column information from the table
+    public function getColumns(string $type): array
+    {
+        $table = (new $type)->getTable();
+        return DB::select("
+            SHOW COLUMNS FROM {$table}
+            WHERE (
+                type != 'timestamp' AND
+                extra != 'auto_increment'
+            )
+        ");
+    }
+
+    // get foreign key constrains in a table
+    function foreign_keys(string $type): array
+    {
+        $db = DB::connection()->getDatabaseName();
+        $table = (new $type)->getTable();
+
+        return DB::select("
+            SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+            WHERE (
+                REFERENCED_TABLE_SCHEMA = '{$db}' AND
+                TABLE_NAME = '{$table}'
+            )
+        ");
     }
 }

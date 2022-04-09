@@ -71,7 +71,7 @@
             </a>
         </div>
 
-        <table class="mb-4">
+        <table class="table mb-4">
             <thead>
             <tr>
                 <th>

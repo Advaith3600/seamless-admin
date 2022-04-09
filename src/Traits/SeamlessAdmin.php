@@ -5,15 +5,6 @@ namespace Advaith\SeamlessAdmin\Traits;
 trait SeamlessAdmin
 {
     /**
-     * Private property which determines the existence of admin page
-     * Overriding the value to false will not affect anything
-     * To remove the model from being displayed from the admin page remove this trait
-     *
-     * @var bool
-     */
-    public bool $hasAdminPage = true;
-
-    /**
      * Determines the information shown on the index page of the model listing
      *
      * @return array
@@ -104,5 +95,15 @@ trait SeamlessAdmin
     public function adminCanAccessDelete(): bool
     {
         return true;
+    }
+
+    /**
+     * Convert the model instance to a string
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->{$this->getFillable()[0]};
     }
 }
