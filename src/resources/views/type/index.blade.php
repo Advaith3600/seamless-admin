@@ -71,87 +71,94 @@
             </a>
         </div>
 
-        <table class="table mb-4">
-            <thead>
-            <tr>
-                <th>
-                    <input
-                        type="checkbox"
-                        v-bind:checked="selected.size === {{ count($data) }}"
-                        v-on:click="checkAll({{ $data->pluck($instance->getKeyName()) }})"
-                    />
-                </th>
-                @foreach($fillable as $f)
+        <div class="overflow-x-auto">
+            <table class="table mb-4">
+                <thead>
+                <tr>
                     <th>
-                        @php
-                            if (isset(request()->by, request()->order)) {
-                                if (request()->by === $f) $fill = request()->order === 'asc' ? 'up' : 'down';
-                                else $fill = 'light';
-                            }
-                        @endphp
-                        <div
-                            class="flex justify-between items-center sort {{ $fill ?? '' }}"
-                            v-on:click="sort('{{ $f }}', '{{ request()->order }}')"
-                        >
-                            <div>{{ str($f)->ucfirst() }}</div>
-                            <div class="flex flex-col">
-                                <i data-feather="chevron-up" class="up" stroke-width="3"></i>
-                                <i data-feather="chevron-down" class="down" stroke-width="3"></i>
-                            </div>
-                        </div>
-                    </th>
-                @endforeach
-                <th></th>
-            </tr>
-            </thead>
-
-            <tbody>
-            @forelse($data as $row)
-                <tr v-on:click="redirect('{{ route('admin.type.show', [request()->type, $row->getKey()]) }}')">
-                    <td>
                         <input
                             type="checkbox"
-                            v-bind:checked="selected.has({{ $row->getKey() }})"
-                            v-on:change="checkIndividual({{ $row->getKey() }})"
-                            v-on:click.stop
+                            v-bind:checked="selected.size === {{ count($data) }}"
+                            v-on:click="checkAll({{ $data->pluck($instance->getKeyName()) }})"
                         />
-                    </td>
+                    </th>
                     @foreach($fillable as $f)
-                        <td>{{ $row[$f] }}</td>
+                        <th>
+                            @php
+                                if (isset(request()->by, request()->order)) {
+                                    if (request()->by === $f) $fill = request()->order === 'asc' ? 'up' : 'down';
+                                    else $fill = 'light';
+                                }
+                            @endphp
+                            <div
+                                class="flex justify-between items-center sort {{ $fill ?? '' }}"
+                                v-on:click="sort('{{ $f }}', '{{ request()->order }}')"
+                            >
+                                <div>{{ str($f)->ucfirst() }}</div>
+                                <div class="flex flex-col">
+                                    <i data-feather="chevron-up" class="up" stroke-width="3"></i>
+                                    <i data-feather="chevron-down" class="down" stroke-width="3"></i>
+                                </div>
+                            </div>
+                        </th>
                     @endforeach
-                    <td>
-                        <div class="flex gap-3">
-                            @if($instance->adminCanAccessEdit())
-                                <a
-                                    href="{{ route('admin.type.edit', [request()->type, $row->getKey()]) }}"
-                                    class="btn yellow small link"
-                                    v-on:click.stop
-                                >
-                                    <i data-feather="edit"></i>
-                                    Edit
-                                </a>
-                            @endif
-                            @if($instance->adminCanAccessDelete())
-                                <a
-                                    href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->getKey()]]) }}"
-                                    class="btn red small link"
-                                    v-on:click.stop
-                                >
-                                    <i data-feather="trash-2"></i>
-                                    Delete
-                                </a>
-                            @endif
-                        </div>
-                    </td>
+                    <th></th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="{{ count($fillable) + 2 }}" class="text-center">No data found</td>
-                </tr>
-            @endforelse
-            </tbody>
-        </table>
+                </thead>
 
-        {{ $data->links('pagination::tailwind') }}
+                <tbody>
+                @forelse($data as $row)
+                    <tr
+                        v-bind:class="{ selected: selected.has({{ $row->getKey() }}) }"
+                        v-on:click="redirect('{{ route('admin.type.show', [request()->type, $row->getKey()]) }}')"
+                    >
+                        <td>
+                            <input
+                                type="checkbox"
+                                v-bind:checked="selected.has({{ $row->getKey() }})"
+                                v-on:change="checkIndividual({{ $row->getKey() }})"
+                                v-on:click.stop
+                            />
+                        </td>
+                        @foreach($fillable as $f)
+                            <td>{{ $row[$f] }}</td>
+                        @endforeach
+                        <td>
+                            <div class="flex gap-3">
+                                @if($instance->adminCanAccessEdit())
+                                    <a
+                                        href="{{ route('admin.type.edit', [request()->type, $row->getKey()]) }}"
+                                        class="btn yellow small link"
+                                        v-on:click.stop
+                                    >
+                                        <i data-feather="edit"></i>
+                                        Edit
+                                    </a>
+                                @endif
+                                @if($instance->adminCanAccessDelete())
+                                    <a
+                                        href="{{ route('admin.type.delete', [request()->type, 'ids' => [$row->getKey()]]) }}"
+                                        class="btn red small link"
+                                        v-on:click.stop
+                                    >
+                                        <i data-feather="trash-2"></i>
+                                        Delete
+                                    </a>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="{{ count($fillable) + 2 }}" class="text-center">No data found</td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            {{ $data->links('pagination::tailwind') }}
+        </div>
     </div>
 @endsection

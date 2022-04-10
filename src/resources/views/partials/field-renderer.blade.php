@@ -1,6 +1,6 @@
 @php $is_textarea = in_array($column->Type, ['tinytext', 'text', 'mediumtext', 'longtext']); @endphp
 
-<div class="flex flex-col {{ $is_textarea ? 'col-span-2' : '' }}">
+<div class="flex flex-col {{ $is_textarea ? 'md:col-span-2' : '' }}">
     <label
         for="{{ $column->Field }}"
         class="mb-1 font-semibold"

@@ -4,15 +4,15 @@
     @include('seamless::partials.header')
 </head>
 <body>
-    <div class="uppercase font-bold text-2xl p-4" id="logo">
-        <a href="{{ url('') }}">{{ config('app.name') }}</a>
-    </div>
+    <section class="fixed top-0 left-0 h-full z-10">
+        @include('seamless::partials.logo')
 
-    @include('seamless::partials.navbar')
-
-    @include('seamless::partials.sidebar')
+        @include('seamless::partials.sidebar')
+    </section>
 
     <main id="main">
+        @include('seamless::partials.navbar')
+
         @yield('content')
 
         @include('seamless::partials.footer')

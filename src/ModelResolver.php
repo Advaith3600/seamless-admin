@@ -4,6 +4,7 @@ namespace Advaith\SeamlessAdmin;
 
 use FilesystemIterator;
 use Illuminate\Support\Facades\DB;
+use Advaith\SeamlessAdmin\Facades\SeamlessAdmin;
 
 class ModelResolver
 {
@@ -103,6 +104,26 @@ class ModelResolver
                 return $instance->hasAdminPage !== false && $instance->adminCanAccessIndex();
             }
         );
+    }
+
+    public function getSidebarElements(): array
+    {
+        $models = $this->getModels();
+        $routes = SeamlessAdmin::getRoutes();
+
+        $combined = ['_default' => []];
+
+        foreach ($models as $model) {
+            if (($group = (new $model)->adminGroup) !== null) $combined[$group][] = $model;
+            else $combined['_default'][] = $model;
+        }
+
+        foreach ($routes as $route) {
+            if (isset($route['options']['group'])) $combined[$route['options']['group']][] = $route;
+            else $combined['_default'][] = $route;
+        }
+
+        return [$combined, count($models) + count($routes)];
     }
 
     // function to get column information from the table

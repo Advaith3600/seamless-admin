@@ -82,6 +82,9 @@ $border-radius: 6px;
     }
     tr:nth-of-type(odd) td { background: #e9e9e9;}
     tr:hover td { background: #ddd; }
+    tr.selected td { background: lighten($green, 42%); }
+    tr.selected:nth-of-type(odd) td { background: lighten($green, 38%); }
+    tr.selected:hover td { background: lighten($green, 34%); }
 
     thead tr th {
         font-weight: 900;
@@ -130,4 +133,12 @@ $border-radius: 6px;
     &.down svg.up { opacity: $opacity; }
 
     &.light svg { opacity: $opacity; }
+}
+
+span[aria-current=page] span {
+    background: lighten($green, 50%);
+    color: $green;
+    border-color: $green;
+    position: relative;
+    z-index: 1;
 }

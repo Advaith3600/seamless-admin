@@ -1,11 +1,12 @@
+$sidebar-width: 300px;
+$navbar-height: 65px;
+
 body {
     min-height: 100vh;
     background: var(--seamless-background);
     color: var(--seamless-color);
 
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    grid-template-rows: auto 1fr;
+    padding-left: $sidebar-width;
 }
 
 #main {
@@ -24,14 +25,20 @@ body {
     background: var(--seamless-sidebar-background);
     color: var(--seamless-sidebar-color);
     border-bottom: 1px solid var(--seamless-sidebar-color);
+    width: $sidebar-width;
+    height: $navbar-height;
+}
+
+#navbar {
+    height: $navbar-height;
 }
 
 #sidebar {
     background: var(--seamless-sidebar-background);
     color: var(--seamless-sidebar-color);
-    position: sticky;
-    top: 0;
     overflow-y: auto;
+    height: 100%;
+    width: $sidebar-width;
 
     ul {
         padding: 0.25rem 0;
@@ -43,8 +50,17 @@ body {
                 padding: 0.75rem 1rem;
             }
 
+            &.nav-group {
+                text-transform: uppercase;
+                font-size: 13px;
+                opacity: 0.6;
+                font-weight: bold;
+                padding: 0.5rem 1.25rem 0;
+            }
+
             a {
                 display: flex;
+                align-items: center;
                 width: 100%;
                 padding: 0.5rem 1rem;
                 transition: background 250ms ease;
@@ -57,6 +73,11 @@ body {
 
                 &.active {
                     background: rgba(255, 255, 255, .15);
+                }
+
+                svg {
+                    width: 18px;
+                    height: 18px;
                 }
             }
         }

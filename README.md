@@ -72,6 +72,10 @@ All the model specific configuration should go inside the respective model file.
 - `public bool $hasAdminPage`: Set this to `false` to prevent the model from showing up on the admin page. Advantage of
   using this instead of removing the trait from the model is when other models try to check for foreign keys this will
   be used as a hint to fetch other columns.
+- `public string $adminIcon`: We use [feathericons](https://feathericons.com/) as the icon provider. Type in the name of the icon you want to use.
+- `public string $adminGroup`: Add a value to change the group in which the model should be displayed in the sidebar.
+
+
 - `protected $primaryKey`: Primary key of the model will be used even if it is not `id` wherever it is needed.
 - `protected $fillable`: `adminIndexFields` uses data from the `$fillable` and `$hidden` variable to show default values
 - `protected $hidden`: `adminIndexFields` uses data from the `$hidden` and `$hidden` variable to show default values
@@ -194,7 +198,11 @@ class AppServiceProvider extends ServiceProvider
     ...
     public function boot()
     {
-        SeamlessAdmin::add('route-name', 'Alias', fn() => true);
+        SeamlessAdmin::add('files.index', 'File', [
+            'isAllowed' => fn() => auth()->user()->can('manage_files'),
+            'icon' => 'layout',
+            'group' => 'Blog'
+        ]);
     }
 }
 ```
@@ -204,8 +212,10 @@ The `add` method takes 3 arguments:
 1. The route name. This is the route name that you have defined in your routes file. Note: This is not url itself but
    instead the name of the route.
 2. Alias for the route. This is the name that will be displayed in the sidebar of the admin page.
-3. An optional callable. This callable is optional and it determines whether the route should be shown in the sidebar.
-   This is useful when you have to hide the page for certain users.
+3. An optional array which consists of
+   - `isAllowed`: Whether the route is visible to the current user
+   - `icon`: Icon to be displayed in the sidebar. We use [feathericons](https://feathericons.com)
+   - `group`: Group in sidebar to which the custom route should be added.
 
 To fully utilize the custom page, extend the layout `seamless::layout` in your blade file. Exmaple:
 
