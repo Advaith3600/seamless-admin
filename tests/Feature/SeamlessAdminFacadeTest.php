@@ -25,13 +25,13 @@ class SeamlessAdminFacadeTest extends TestCase
 
     public function test_seamlessAdmin_facade_after_optional_entry()
     {
-        SeamlessAdmin::add('route-name-2', 'Alias', fn() => true);
+        SeamlessAdmin::add('route-name-2', 'Alias', ['isAllowed' => fn() => true]);
         $this->assertCount(++$this->count, SeamlessAdmin::getRoutes());
     }
 
     public function test_seamlessAdmin_facade_after_optional_false_entry()
     {
-        SeamlessAdmin::add('route-name-3', 'Alias', fn() => false);
+        SeamlessAdmin::add('route-name-3', 'Alias', ['isAllowed' => fn() => false]);
         $this->assertCount($this->count, SeamlessAdmin::getRoutes());
     }
 }

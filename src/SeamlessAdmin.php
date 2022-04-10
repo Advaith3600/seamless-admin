@@ -21,7 +21,7 @@ class SeamlessAdmin
     {
         return array_filter(
             $this->routes,
-            fn($route) => is_null($route['options']['isAllowed']) || $route['options']['isAllowed']()
+            fn($route) => !isset($route['options']['isAllowed']) || $route['options']['isAllowed']()
         );
     }
 }
