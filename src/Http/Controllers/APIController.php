@@ -49,4 +49,25 @@ class APIController extends Controller
             ->get()
             ->toArray();
     }
+
+    public function type_index_data(string $type, Request $request)
+    {
+        $type = $this->resolveType($type);
+        $this->hasPrivilege($type, 'Index');
+        $instance = new $type;
+
+        $fillable = collect($instance->adminIndexFields());
+
+        $data = $type::orderBy(request()->by ?? $instance->getKeyName(), request()->order ?? 'desc')
+            ->when(request()->search, function ($query) use ($fillable) {
+                $search = request()->search;
+                foreach ($fillable as $column)
+                    $query->orWhere($column, 'like', "%{$search}%");
+            })
+            ->select((clone $fillable)->add($instance->getKeyName())->toArray())
+            ->paginate(request()->perPage ?? 10);
+
+
+        return $data;
+    }
 }

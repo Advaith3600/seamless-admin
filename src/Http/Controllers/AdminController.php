@@ -39,23 +39,9 @@ class AdminController extends Controller
     {
         $type = $this->resolveType($type);
         $this->hasPrivilege($type, 'Index');
-        $instance = new $type;
-
-        $fillable = collect($instance->adminIndexFields());
-
-        $data = $type::orderBy(request()->by ?? $instance->getKeyName(), request()->order ?? 'desc')
-            ->when(request()->q, function ($query) use ($fillable) {
-                $search = request()->q;
-                foreach ($fillable as $column)
-                    $query->orWhere($column, 'like', "%{$search}%");
-            })
-            ->select((clone $fillable)->add($instance->getKeyName())->toArray())
-            ->paginate(request()->perPage ?? 10);
 
         return view('seamless::type.index', [
-            'type' => $type,
-            'data' => $data,
-            'fillable' => $fillable
+            'type' => $type
         ]);
     }
 

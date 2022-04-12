@@ -39,8 +39,7 @@
             default="{{ old($column->Field) ?? $data[$column->Field] ?? '' }}"
             referenced_table_name="{{ $column->Foreign->REFERENCED_TABLE_NAME }}"
             referenced_column_name="{{ $column->Foreign->REFERENCED_COLUMN_NAME }}"
-            api_endpoint="{{ route('api.admin.type.search_foreign_references', request()->type) }}"
-        ></foreign-selection>
+            api_endpoint="{{ route('api.admin.type.search_foreign_references', request()->type) }}"></foreign-selection>
     @else
         @php
             $type = 'text';

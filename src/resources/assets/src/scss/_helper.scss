@@ -1,7 +1,7 @@
 $green: #4E9F3D;
 $grey: #444;
 $yellow: #e4cf1b;
-$red: #cc2626;
+$red: #D62828;
 $border-radius: 6px;
 
 @mixin variant($color, $name, $font: #fff) {
@@ -74,6 +74,7 @@ $border-radius: 6px;
     border-radius: $border-radius;
     overflow: hidden;
     white-space: nowrap;
+    position: relative;
 
     tr td {
         background: #f6f6f6;
@@ -85,6 +86,20 @@ $border-radius: 6px;
     tr.selected td { background: lighten($green, 42%); }
     tr.selected:nth-of-type(odd) td { background: lighten($green, 38%); }
     tr.selected:hover td { background: lighten($green, 34%); }
+
+    tr.loader {
+        background: rgba(0 0 0 / 30%) !important;
+        backdrop-filter: blur(4px);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
 
     thead tr th {
         font-weight: 900;
@@ -105,6 +120,7 @@ $border-radius: 6px;
     }
 
     .icon {
+        display: flex;
         position: absolute;
         top: 50%;
         right: 1rem;
@@ -121,24 +137,47 @@ $border-radius: 6px;
     svg {
         width: 14px;
         height: 14px;
-
-        $scale: 1.2;
-        $offset: 1px;
-        &.up { transform: translateY($offset) scale($scale); }
-        &.down { transform: translateY(-$offset) scale($scale); }
     }
 
+    $offset: 1px;
+    .up svg { transform: translateY($offset) }
+    .down svg { transform: translateY(-$offset) }
+
     $opacity: 0.4;
-    &.up svg.down { opacity: $opacity; }
-    &.down svg.up { opacity: $opacity; }
+    &.up .down svg { opacity: $opacity; }
+    &.down .up svg { opacity: $opacity; }
 
     &.light svg { opacity: $opacity; }
 }
 
-span[aria-current=page] span {
-    background: lighten($green, 50%);
-    color: $green;
-    border-color: $green;
-    position: relative;
-    z-index: 1;
+.pagination {
+    list-style-type: none;
+
+    .pagination-item {
+        display: inline-block;
+        height: 40px;
+    }
+
+    .active {
+        background: lighten($green, 50%);
+        color: $green;
+        $border-color: lighten($green, 25%);
+        border-left: 1px solid $border-color;
+        border-right: 1px solid $border-color;
+        position: relative;
+        z-index: 1;
+        cursor: default;
+
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: $border-color;
+        }
+
+        &::before { top: 0; }
+        &::after { bottom: 0; }
+    }
 }
