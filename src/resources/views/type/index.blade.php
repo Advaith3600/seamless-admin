@@ -72,7 +72,7 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="table mb-4">
+            <table class="table">
                 <thead>
                 <tr>
                     <th>
@@ -157,7 +157,7 @@
             </table>
         </div>
 
-        <div class="pagination">
+        <div class="pagination mt-4">
             {{ $data->links('pagination::tailwind') }}
         </div>
     </div>

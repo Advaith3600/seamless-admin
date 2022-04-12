@@ -4,7 +4,9 @@
     @include('seamless::partials.header')
 </head>
 <body>
-    <section class="fixed top-0 left-0 h-full z-10">
+    <div id="sidebar-backdrop"></div>
+
+    <section id="sidebar-container">
         @include('seamless::partials.logo')
 
         @include('seamless::partials.sidebar')

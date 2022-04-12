@@ -12,7 +12,7 @@ class ModelResolver
 
     public function __construct()
     {
-        $this->registerModels(app_path('models/'));
+        $this->registerModels(app_path('Models/'));
     }
 
     private function extract_classname($file): string
