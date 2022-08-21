@@ -2,9 +2,10 @@
 
 namespace Advaith\SeamlessAdmin;
 
-use FilesystemIterator;
-use Illuminate\Support\Facades\DB;
 use Advaith\SeamlessAdmin\Facades\SeamlessAdmin;
+use FilesystemIterator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ModelResolver
 {
@@ -13,6 +14,51 @@ class ModelResolver
     public function __construct()
     {
         $this->registerModels(app_path('Models/'));
+    }
+
+    private function registerModels(string $path): void
+    {
+        // caching the models
+        $this->models = Cache::rememberForever($this->getCacheKey(), function () use ($path) {
+            $models = [];
+
+            // file system iterator
+            $fileSystemIterator = new FilesystemIterator($path);
+
+            // if the trait is registered in a particular model, add it to the models array
+            foreach ($fileSystemIterator as $file) {
+                // recursive call if the file is a directory
+                if ($file->isDir()) {
+                    $this->registerModels($file->getPathname());
+                    continue;
+                }
+
+                // only parse .php files
+                if ($file->getExtension() !== 'php') continue;
+
+                $className = $this->extract_classname($file->getPathname());
+
+                // ignore if the file is not a class
+                try {
+                    new $className;
+                } catch (\Exception) {
+                    continue;
+                }
+
+                if (in_array(
+                    Traits\SeamlessAdmin::class,
+                    class_uses_recursive($className),
+                    true
+                )) $models[] = $className;
+            }
+
+            return $models;
+        });
+    }
+
+    public function getCacheKey(): string
+    {
+        return 'seamless-admin.models';
     }
 
     private function extract_classname($file): string
@@ -46,39 +92,23 @@ class ModelResolver
         return "{$namespace}\\{$class}";
     }
 
-    private function registerModels(string $path): void
-    {
-        // iterator
-        $fileSystemIterator = new FilesystemIterator($path);
-
-        // if the trait is registered in a particular model, add it to the models array
-        foreach ($fileSystemIterator as $file) {
-            // recursive call if the file is a directory
-            if ($file->isDir()) {
-                $this->registerModels($file->getPathname());
-                continue;
-            }
-
-            // only parse .php files
-            if ($file->getExtension() !== 'php') continue;
-
-            $className = $this->extract_classname($file->getPathname());
-
-            if (in_array(
-                \Advaith\SeamlessAdmin\Traits\SeamlessAdmin::class,
-                class_uses_recursive($className),
-                true
-            )) $this->models[] = $className;
-        }
-    }
-
-    // function to parse the type into a md5 string
+    /**
+     * function to parse the type into a md5 string
+     *
+     * @param string $type
+     * @return string
+     */
     public function parseType(string $type): string
     {
         return md5($type);
     }
 
-    // function resolve the type from md5 string
+    /**
+     * function resolve the type from md5 string
+     *
+     * @param string $type
+     * @return string|null
+     */
     public function resolveType(string $type): string|null
     {
         return collect($this->models)
@@ -86,7 +116,12 @@ class ModelResolver
             ->first();
     }
 
-    // resolve model from table name if exists
+    /**
+     * resolve model from table name if exists
+     *
+     * @param string $table
+     * @return string|null
+     */
     public function resolveModel(string $table): string|null
     {
         return collect($this->models)
@@ -94,18 +129,11 @@ class ModelResolver
             ->first();
     }
 
-    // get the models registered
-    public function getModels(): array
-    {
-        return array_filter(
-            $this->models,
-            function ($model) {
-                $instance = new $model;
-                return $instance->hasAdminPage !== false && $instance->adminCanAccessIndex();
-            }
-        );
-    }
-
+    /**
+     * get the registered models
+     *
+     * @return array
+     */
     public function getSidebarElements(): array
     {
         $models = $this->getModels();
@@ -126,7 +154,26 @@ class ModelResolver
         return [$combined, count($models) + count($routes)];
     }
 
-    // function to get column information from the table
+    /**
+     * @return array
+     */
+    public function getModels(): array
+    {
+        return array_filter(
+            $this->models,
+            function ($model) {
+                $instance = new $model;
+                return $instance->hasAdminPage !== false && $instance->adminCanAccessIndex();
+            }
+        );
+    }
+
+    /**
+     * function to get column information from the table
+     *
+     * @param string $type
+     * @return array
+     */
     public function getColumns(string $type): array
     {
         $table = (new $type)->getTable();
@@ -139,19 +186,25 @@ class ModelResolver
         ");
     }
 
-    // get foreign key constrains in a table
-    function foreign_keys(string $type): array
+    /**
+     * get foreign key constrains in a table
+     *
+     * @param string $type
+     * @return array
+     */
+    public function foreign_keys(string $type): array
     {
-        $db = DB::connection()->getDatabaseName();
-        $table = (new $type)->getTable();
-
-        return DB::select("
-            SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
-            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-            WHERE (
-                REFERENCED_TABLE_SCHEMA = '{$db}' AND
-                TABLE_NAME = '{$table}'
-            )
-        ");
+        return DB::select(
+            'SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE (
+                    REFERENCED_TABLE_SCHEMA = ? AND
+                    TABLE_NAME = ?
+            )',
+            [
+                DB::connection()->getDatabaseName(),
+                (new $type)->getTable()
+            ]
+        );
     }
 }

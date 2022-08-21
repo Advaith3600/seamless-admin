@@ -2,6 +2,7 @@
 
 namespace Advaith\SeamlessAdmin;
 
+use Advaith\SeamlessAdmin\Console\ClearCache;
 use Illuminate\Support\ServiceProvider;
 
 class SeamlessAdminServiceProvider extends ServiceProvider
@@ -37,6 +38,9 @@ class SeamlessAdminServiceProvider extends ServiceProvider
 
             // publishing config file
             $this->publishes([__DIR__ . '/config/config.php' => config_path('seamless-admin.php')], 'config');
+
+            // registering console commands
+            $this->commands([ClearCache::class]);
         }
     }
 }

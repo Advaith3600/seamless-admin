@@ -29,6 +29,15 @@ related to this package.
 command again with the flag `--tag="assets"` to republish the assets. This will override the existing assets with the
 new ones.
 
+### Caching
+
+Seamless Admin package uses caching to improve the loading time of the package routes. If you are not able to find your
+model in the sidebar it might be due to the caching. To clear the cache, run
+
+```shell
+php artisan seamless:clear
+```
+
 ## Usage
 
 Use the provided trait, `SeamlessAdmin`, in any of your models to get started with the package. Example:
@@ -61,7 +70,8 @@ Et Voila! That's all you have to do to get started. Visit `/admin` to access the
 - `api_prefix`: Change the prefix for api routes.
 - `middleware`: Global middleware for the admin routes. By default, the auth middleware is set.
 - `api_middleware`: Middleware group for api routes.
-- `layout`: You can customize the layout that the admin pages use by changing this option. Make sure that you yield appropriately to include dynamic contents.
+- `layout`: You can customize the layout that the admin pages use by changing this option. Make sure that you yield
+  appropriately to include dynamic contents.
 
 ### Model specific configuration
 
@@ -72,7 +82,8 @@ All the model specific configuration should go inside the respective model file.
 - `public bool $hasAdminPage`: Set this to `false` to prevent the model from showing up on the admin page. Advantage of
   using this instead of removing the trait from the model is when other models try to check for foreign keys this will
   be used as a hint to fetch other columns.
-- `public string $adminIcon`: We use [feathericons](https://feathericons.com/) as the icon provider. Type in the name of the icon you want to use.
+- `public string $adminIcon`: We use [feathericons](https://feathericons.com/) as the icon provider. Type in the name of
+  the icon you want to use.
 - `public string $adminGroup`: Add a value to change the group in which the model should be displayed in the sidebar.
 
 
@@ -167,7 +178,8 @@ Determine whether the logged-in user has the privilege to delete data from the d
 public function __toString(): string
 ```
 
-A magic method to convert the model instance into a string. By default, the field from `$fillable` is used. Usage example:
+A magic method to convert the model instance into a string. By default, the field from `$fillable` is used. Usage
+example:
 
 ```php
 public function __toString(): string
@@ -213,9 +225,9 @@ The `add` method takes 3 arguments:
    instead the name of the route.
 2. Alias for the route. This is the name that will be displayed in the sidebar of the admin page.
 3. An optional array which consists of
-   - `isAllowed`: Whether the route is visible to the current user
-   - `icon`: Icon to be displayed in the sidebar. We use [feathericons](https://feathericons.com)
-   - `group`: Group in sidebar to which the custom route should be added.
+    - `isAllowed`: Whether the route is visible to the current user
+    - `icon`: Icon to be displayed in the sidebar. We use [feathericons](https://feathericons.com)
+    - `group`: Group in sidebar to which the custom route should be added.
 
 To fully utilize the custom page, extend the layout `seamless::layout` in your blade file. Exmaple:
 

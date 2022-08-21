@@ -2,6 +2,8 @@ vendor/
 node_modules/
 .idea/
 
+._*
+
 .phpunit.result.cache
 composer.lock
 package-lock.json
