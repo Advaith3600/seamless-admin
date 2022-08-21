@@ -10,29 +10,28 @@ A seamless Django-like admin panel setup for Laravel. Simple, non-cms table mana
 
 1. Require the Package
 
-Run the following command to install the package into your Laravel application:
+   Run the following command to install the package into your Laravel application:
 
-```shell
-composer require advaith/seamless-admin
-```
+    ```shell
+    composer require advaith/seamless-admin
+    ```
 
 2. Publish assets and config files with:
 
-```shell
-php artisan vendor:publish --provider="Advaith\SeamlessAdmin\SeamlessAdminServiceProvider"
-```
+    ```shell
+    php artisan vendor:publish --provider="Advaith\SeamlessAdmin\SeamlessAdminServiceProvider"
+    ```
 
-This will create a `seamless.php` configuration file within your config folder. This will also publish all the assets
-related to this package.
+    This will create a `seamless.php` configuration file within your config folder. This will also publish all the assets
+    related to this package.
 
-**Note**: If you find the UI or the admin functionalities are not working properly after a `composer update`, run this
-command again with the flag `--tag="assets"` to republish the assets. This will override the existing assets with the
-new ones.
+    > **Note**: If you find the UI or the admin functionalities are not working properly after a `composer update`, run this
+    > command again with the flag `--tag="assets"` to republish the assets. This will override the existing assets with the
+    > new ones.
 
-### Caching
+## Caching
 
-Seamless Admin package uses caching to improve the loading time of the package routes. If you are not able to find your
-model in the sidebar it might be due to the caching. To clear the cache, run
+The SeamlessAdmin package uses caching to improve the loading time of the package routes. If you cannot find your model registered in the sidebar, try clearing the cache. To clear the cache, run
 
 ```shell
 php artisan seamless:clear
