@@ -22,12 +22,12 @@ A seamless Django-like admin panel setup for Laravel. Simple, non-cms table mana
     php artisan vendor:publish --provider="Advaith\SeamlessAdmin\SeamlessAdminServiceProvider"
     ```
 
-    This will create a `seamless.php` configuration file within your config folder. This will also publish all the assets
-    related to this package.
+    This will create a `seamless.php` configuration file within your config folder. This will also publish all the 
+    assets related to this package.
 
-    > **Note**: If you find the UI or the admin functionalities are not working properly after a `composer update`, run this
-    > command again with the flag `--tag="assets"` to republish the assets. This will override the existing assets with the
-    > new ones.
+    > **Note**: If you find the UI or the admin functionalities are not working properly after a `composer update`, run 
+    > this command again with the flag `--tag="seamless-admin-assets"` to republish the assets. This will override the 
+    > existing assets with the new ones.
 
 ## Caching
 

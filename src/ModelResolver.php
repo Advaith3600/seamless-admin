@@ -16,44 +16,47 @@ class ModelResolver
         $this->registerModels(app_path('Models/'));
     }
 
+    private function extractFromFolder(string $path): array
+    {
+        $models = [];
+
+        // file system iterator
+        $fileSystemIterator = new FilesystemIterator($path);
+
+        // if the trait is registered in a particular model, add it to the models array
+        foreach ($fileSystemIterator as $file) {
+            // recursive call if the file is a directory
+            if ($file->isDir()) {
+                $models = array_merge($models, $this->extractFromFolder($file->getPathname()));
+                continue;
+            }
+
+            // only parse .php files
+            if ($file->getExtension() !== 'php') continue;
+
+            $className = $this->extract_classname($file->getPathname());
+
+            // ignore if the file is not a class
+            if (!class_exists($className)) continue;
+
+            if (in_array(
+                Traits\SeamlessAdmin::class,
+                class_uses_recursive($className),
+                true
+            )) $models[] = $className;
+        }
+
+        return $models;
+    }
+
     private function registerModels(string $path): void
     {
         // caching the models
-        $this->models = Cache::rememberForever($this->getCacheKey(), function () use ($path) {
-            $models = [];
-
-            // file system iterator
-            $fileSystemIterator = new FilesystemIterator($path);
-
-            // if the trait is registered in a particular model, add it to the models array
-            foreach ($fileSystemIterator as $file) {
-                // recursive call if the file is a directory
-                if ($file->isDir()) {
-                    $this->registerModels($file->getPathname());
-                    continue;
-                }
-
-                // only parse .php files
-                if ($file->getExtension() !== 'php') continue;
-
-                $className = $this->extract_classname($file->getPathname());
-
-                // ignore if the file is not a class
-                try {
-                    new $className;
-                } catch (\Exception) {
-                    continue;
-                }
-
-                if (in_array(
-                    Traits\SeamlessAdmin::class,
-                    class_uses_recursive($className),
-                    true
-                )) $models[] = $className;
-            }
-
-            return $models;
-        });
+        $this->models = Cache::remember(
+            $this->getCacheKey(),
+            now()->addDay(),
+            fn() => $this->extractFromFolder($path)
+        );
     }
 
     public function getCacheKey(): string
