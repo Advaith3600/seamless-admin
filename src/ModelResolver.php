@@ -55,7 +55,7 @@ class ModelResolver
         $this->models = Cache::remember(
             $this->getCacheKey(),
             now()->addDay(),
-            fn() => $this->extractFromFolder($path)
+            fn () => $this->extractFromFolder($path)
         );
     }
 
@@ -115,7 +115,7 @@ class ModelResolver
     public function resolveType(string $type): string|null
     {
         return collect($this->models)
-            ->filter(fn($model) => md5($model) == $type)
+            ->filter(fn ($model) => md5($model) == $type)
             ->first();
     }
 
@@ -128,7 +128,7 @@ class ModelResolver
     public function resolveModel(string $table): string|null
     {
         return collect($this->models)
-            ->filter(fn($model) => (new $model)->getTable() === $table)
+            ->filter(fn ($model) => (new $model)->getTable() === $table)
             ->first();
     }
 
@@ -179,14 +179,33 @@ class ModelResolver
      */
     public function getColumns(string $type): array
     {
+        // get the database connection type
+        $conn = config('database.default');
+
+        // get the table name
         $table = (new $type)->getTable();
-        return DB::select("
+
+        // prepare the SQL query based on the connection type
+        if ($conn == 'mysql') {
+            $query = "
             SHOW COLUMNS FROM {$table}
             WHERE (
                 type != 'timestamp' AND
                 extra != 'auto_increment'
-            )
-        ");
+            )";
+        } else if ($conn == 'pgsql') {
+            $query = "
+            SELECT
+                *, data_type AS \"Type\", column_name AS \"Field\", is_nullable AS \"Null\"
+            FROM
+                information_schema.columns
+            WHERE
+                table_schema = 'public'
+                AND table_name = '{$table}';";
+        }
+
+        // execute the query and return the result as an array of objects
+        return DB::select($query);
     }
 
     /**
@@ -197,17 +216,45 @@ class ModelResolver
      */
     public function foreign_keys(string $type): array
     {
-        return DB::select(
-            'SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+        // get the database connection type
+        $conn = config('database.default');
+        
+        // get the table name
+        $table = (new $type)->getTable();
+
+        if ($conn == 'mysql') {
+            return DB::select(
+                'SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
                 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
                 WHERE (
                     REFERENCED_TABLE_SCHEMA = ? AND
                     TABLE_NAME = ?
             )',
-            [
-                DB::connection()->getDatabaseName(),
-                (new $type)->getTable()
-            ]
-        );
+                [
+                    DB::connection()->getDatabaseName(),
+                    $table
+                ]
+            );
+        } else if ($conn == 'pgsql') {
+            return DB::select("
+            SELECT
+                tc.table_schema, 
+                tc.constraint_name, 
+                tc.table_name, 
+                kcu.column_name, 
+                ccu.table_schema AS foreign_table_schema,
+                ccu.table_name AS foreign_table_name,
+                ccu.column_name AS foreign_column_name 
+            FROM 
+                information_schema.table_constraints AS tc 
+                JOIN information_schema.key_column_usage AS kcu
+                ON tc.constraint_name = kcu.constraint_name
+                AND tc.table_schema = kcu.table_schema
+                JOIN information_schema.constraint_column_usage AS ccu
+                ON ccu.constraint_name = tc.constraint_name
+                AND ccu.table_schema = tc.table_schema
+            WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name= '{$table}';
+        ");
+        }
     }
 }
