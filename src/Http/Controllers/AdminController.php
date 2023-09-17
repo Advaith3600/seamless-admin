@@ -102,6 +102,7 @@ class AdminController extends Controller
         $this->hasPrivilege($type, 'Edit');
 
         $columns = collect($this->resolver->getColumns($type));
+        dd($columns);
 
         $data = $type::find(
             $id,

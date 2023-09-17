@@ -2,6 +2,7 @@
 
 namespace Advaith\SeamlessAdmin;
 
+use Advaith\SeamlessAdmin\Exceptions\UnhandledDatabaseConnection;
 use Advaith\SeamlessAdmin\Facades\SeamlessAdmin;
 use FilesystemIterator;
 use Illuminate\Support\Facades\Cache;
@@ -188,7 +189,7 @@ class ModelResolver
         // prepare the SQL query based on the connection type
         if ($conn == 'mysql') {
             $query = "
-            SHOW COLUMNS FROM {$table}
+            SHOW COLUMNS FROM $table
             WHERE (
                 type != 'timestamp' AND
                 extra != 'auto_increment'
@@ -201,7 +202,11 @@ class ModelResolver
                 information_schema.columns
             WHERE
                 table_schema = 'public'
-                AND table_name = '{$table}';";
+                AND table_name = '$table';";
+        } else if ($conn == 'sqlite') {
+            $query = "PRAGMA table_info({$table});";
+        } else {
+            throw new UnhandledDatabaseConnection("The database connection '{$conn}' is not currently supported by this package. Please use a supported database connection.");
         }
 
         // execute the query and return the result as an array of objects
@@ -255,6 +260,8 @@ class ModelResolver
                 AND ccu.table_schema = tc.table_schema
             WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name= '{$table}';
         ");
+        } else {
+            throw new UnhandledDatabaseConnection("The database connection '{$conn}' is not currently supported by this package. Please use a supported database connection.");
         }
     }
 }
