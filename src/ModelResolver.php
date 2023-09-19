@@ -53,11 +53,13 @@ class ModelResolver
     private function registerModels(string $path): void
     {
         // caching the models
-        $this->models = Cache::remember(
-            $this->getCacheKey(),
-            now()->addDay(),
-            fn () => $this->extractFromFolder($path)
-        );
+        $this->models = app()->environment('production') ?
+            Cache::remember(
+                $this->getCacheKey(),
+                now()->addDay(),
+                fn () => $this->extractFromFolder($path)
+            ) :
+            $this->extractFromFolder($path);
     }
 
     public function getCacheKey(): string
@@ -192,7 +194,10 @@ class ModelResolver
                 SELECT 
                     COLUMN_NAME AS field, 
                     COLUMN_TYPE AS type, 
-                    IS_NULLABLE AS is_null 
+                    CASE 
+                        WHEN IS_NULLABLE = 'YES' THEN 1
+                        ELSE 0
+                    END AS is_null
                 FROM INFORMATION_SCHEMA.COLUMNS 
                 WHERE 
                     TABLE_NAME = '$table' AND
@@ -204,7 +209,10 @@ class ModelResolver
                 SELECT
                     c.column_name AS field,
                     c.udt_name AS type,
-                    c.is_nullable AS is_null
+                    CASE 
+                        WHEN c.is_nullable = 'YES' THEN TRUE
+                        ELSE FALSE
+                    END AS is_null
                 FROM information_schema.columns c
                 LEFT JOIN 
                     pg_attribute attr ON attr.attrelid = '$table'::regclass AND attr.attname = c.column_name AND attr.atthasdef
