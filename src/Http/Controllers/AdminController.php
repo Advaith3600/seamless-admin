@@ -24,7 +24,7 @@ class AdminController extends Controller
 
     private function wrap_foreign_columns(string $type, array $columns): array
     {
-        $foreign_keys = collect($this->resolver->foreign_keys($type));
+        $foreign_keys = collect($this->resolver->getForeignKeys($type));
 
         return array_map(function ($column) use ($foreign_keys) {
             $column->foreign = $foreign_keys

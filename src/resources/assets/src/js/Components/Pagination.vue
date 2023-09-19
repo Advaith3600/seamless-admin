@@ -8,7 +8,7 @@
             <ul class="pagination bg-white shadow-sm rounded-lg whitespace-nowrap flex items-center md:w-auto w-full">
                 <li class="pagination-item">
                     <span
-                        class="flex justify-center items-center border-gray-200 px-3 py-2 cursor-not-allowed hover:bg-gray-100 no-underline text-gray-600 h-full"
+                        class="flex justify-center items-center border-gray-200 px-3 py-2 cursor-not-allowed no-underline text-gray-600 h-full opacity-50"
                         v-if="isInFirstPage"
                     >
                         <vue-feather type="chevrons-left" size="18"></vue-feather>
@@ -31,8 +31,8 @@
                         @click="onClickPreviousPage"
                         :disabled="isInFirstPage"
                         aria-label="Go to previous page"
-                        class="border-l md:border-r-0 border-r border-gray-200 px-3 py-2 hover:bg-gray-100 text-gray-600 no-underline text-sm h-full"
-                        :class="{'cursor-not-allowed': isInFirstPage}"
+                        class="border-l md:border-r-0 border-r border-gray-200 px-3 py-2 text-gray-600 no-underline text-sm h-full"
+                        :class="isInFirstPage ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-100'"
                     >
                         Previous
                     </button>
@@ -70,8 +70,8 @@
                         @click="onClickNextPage"
                         :disabled="isInLastPage"
                         aria-label="Go to next page"
-                        class="border-l border-gray-200 px-3 py-2 hover:bg-gray-100 text-gray-600 no-underline text-sm h-full"
-                        :class="{'cursor-not-allowed': isInLastPage}"
+                        class="border-l border-gray-200 px-3 py-2 text-gray-600 no-underline text-sm h-full"
+                        :class="isInLastPage ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-100'"
                     >
                         Next
                     </button>
@@ -89,7 +89,7 @@
                         <vue-feather type="chevrons-right" size="18"></vue-feather>
                     </a>
                     <span
-                        class="flex justify-center items-center border-l border-gray-200 px-3 py-2 hover:bg-gray-100 text-gray-600 no-underline cursor-not-allowed h-full"
+                        class="flex justify-center items-center border-l border-gray-200 px-3 py-2 text-gray-600 no-underline cursor-not-allowed h-full opacity-50"
                         v-else
                     >
                         <vue-feather type="chevrons-right" size="18"></vue-feather>

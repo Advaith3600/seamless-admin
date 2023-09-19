@@ -49,7 +49,7 @@
 
                     <th v-for="item in fillable">
                         <div
-                            class="flex justify-between items-center sort"
+                            class="flex justify-between items-center sort gap-2"
                             :class="item === by && (order === 'asc' ? 'up' : 'down')"
                             @click="sort(item)"
                         >

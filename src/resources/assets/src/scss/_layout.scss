@@ -61,10 +61,10 @@ body {
                 display: flex;
                 align-items: center;
                 width: 100%;
-                padding: 0.5rem 1rem;
                 transition: background 250ms ease;
                 border-radius: 6px;
                 margin: 0.25rem 0;
+                @apply px-3 py-1.5;
 
                 &:hover {
                     background: rgba(255, 255, 255, .1);

@@ -1,8 +1,8 @@
-$green: #4E9F3D;
+$green: #0b6248;
 $grey: #444;
 $yellow: #e4cf1b;
 $red: #D62828;
-$border-radius: 6px;
+$border-radius: 0.5rem;
 
 @mixin variant($color, $name, $font: #fff) {
     &.#{$name} {
@@ -27,7 +27,6 @@ $border-radius: 6px;
 
 .btn {
     font-size: 1rem;
-    padding: 0.4em 0.8em;
     border-radius: $border-radius;
     border: none;
     background: $green;
@@ -37,6 +36,7 @@ $border-radius: 6px;
     display: flex;
     align-items: center;
     transition: background 200ms ease;
+    @apply px-3 py-1.5;
 
     svg {
         display: inline-block;
@@ -51,7 +51,7 @@ $border-radius: 6px;
     @include variant($red, 'red');
 
     &.link {
-        @include link-variant(#615803, 'yellow');
+        @include link-variant(#9d8d00, 'yellow');
         @include link-variant($red, 'red');
     }
 
@@ -59,12 +59,20 @@ $border-radius: 6px;
 }
 
 .input {
-    padding: 0.5em 0.8em;
+    appearance: none;
     border-radius: $border-radius;
     border: 1px solid $green;
     background: white;
     outline: none;
     height: 100%;
+    @apply px-3 py-1.5;
+}
+
+select.input {
+    padding-right: 1.25rem;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="%23000000" d="M5.293 7.293l5 5c0.39 0.39 1.024 0.39 1.414 0l5-5c0.39-0.39 0.39-1.024 0-1.414s-1.024-0.39-1.414 0l-4.293 4.293-4.293-4.293c-0.39-0.39-1.024-0.39-1.414 0s-0.39 1.024 0 1.414z"></path></svg>');
+    background-repeat: no-repeat;
+    background-position: right .5em top .6em;
 }
 
 .table {
@@ -159,9 +167,9 @@ $border-radius: 6px;
     }
 
     .active {
-        background: lighten($green, 50%);
+        background: lighten($green, 70%);
         color: $green;
-        $border-color: lighten($green, 25%);
+        $border-color: lighten($green, 20%);
         border-left: 1px solid $border-color;
         border-right: 1px solid $border-color;
         position: relative;

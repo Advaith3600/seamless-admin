@@ -17,7 +17,7 @@
         <form action="{{ route('admin.type.store', request()->type) }}" method="post" class="mt-4">
             @csrf
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4">
                 @foreach($columns as $column)
                     @include('seamless::partials.field-renderer')
                 @endforeach

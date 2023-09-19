@@ -2,6 +2,8 @@
 
 namespace Advaith\SeamlessAdmin;
 
+use Composer\InstalledVersions;
+
 class SeamlessAdmin
 {
     private array $routes = [];
@@ -23,5 +25,10 @@ class SeamlessAdmin
             $this->routes,
             fn($route) => !isset($route['options']['isAllowed']) || $route['options']['isAllowed']()
         );
+    }
+
+    public static function getPackageVersion(): string
+    {
+        return InstalledVersions::getPrettyVersion('advaith/seamless-admin');
     }
 }

@@ -35,7 +35,7 @@ class ModelResolver
             // only parse .php files
             if ($file->getExtension() !== 'php') continue;
 
-            $className = $this->extract_classname($file->getPathname());
+            $className = $this->extractClassname($file->getPathname());
 
             // ignore if the file is not a class
             if (!class_exists($className)) continue;
@@ -67,7 +67,7 @@ class ModelResolver
         return 'seamless-admin.models';
     }
 
-    private function extract_classname($file): string
+    private function extractClassname($file): string
     {
         $fp = fopen($file, 'r');
         $class = $namespace = $buffer = '';
@@ -252,7 +252,7 @@ class ModelResolver
      * @param string $type
      * @return array
      */
-    public function foreign_keys(string $type): array
+    public function getForeignKeys(string $type): array
     {
         // get the database connection type
         $conn = config('database.default');
