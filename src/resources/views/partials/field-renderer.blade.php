@@ -50,7 +50,7 @@
             $type = 'text';
             if ($column->type === 'date') $type = 'date';
             else if ($column->type === 'time') $type = 'time';
-            else if ($column->type === 'datetime') $type = 'datetime-local';
+            else if (in_array($column->type, ['datetime', 'timestamp'])) $type = 'datetime-local';
         @endphp
         <input
             step="any"
@@ -60,7 +60,7 @@
             name="{{ $column->field }}"
             placeholder="{{ $column->type }}"
             {{ $column->is_null ? '' : 'required' }}
-            value="{{ old($column->field) ?? $data[$column->field] ?? '' }}"
+            value="{{ old($column->field) ?? $data[$column->field] ?? (!isset($data) && in_array($column->field, ['created_at', 'updated_at']) ? now() : '') }}"
         />
     @endif
 </div>

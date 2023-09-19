@@ -87,8 +87,8 @@ class AdminController extends Controller
         $columns = collect($this->resolver->getColumns($type));
 
         try {
-            $fields = (new $type)->adminOnCreate($request->only($columns->pluck('Field')->toArray()));
-            $data = $type::create($fields);
+            $fields = (new $type)->adminOnCreate($request->only($columns->pluck('field')->toArray()));
+            $data = $type::forceCreate($fields);
             $data->adminCreated();
             return redirect()->route('admin.type.show', [request()->type, $data->getKey()]);
         } catch (Exception $exception) {
@@ -127,8 +127,10 @@ class AdminController extends Controller
 
         try {
             $item = $type::find($id);
-            $fields = $item->adminOnEdit($request->only($columns->pluck('Field')->toArray()));
+            $fields = $item->adminOnEdit($request->only($columns->pluck('field')->toArray()));
+            $type::unguard(); // turn of Laravel's mass assignment protection
             $item->update($fields);
+            $type::reguard(); // turn backing on the mass assignment protection
             $item->adminEdited();
             return redirect()->route('admin.type.show', [request()->type, $item->getKey()]);
         } catch (Exception $exception) {

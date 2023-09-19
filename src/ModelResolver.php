@@ -190,39 +190,43 @@ class ModelResolver
         if ($conn == 'mysql') {
             $query = "
                 SELECT 
-                    COLUMN_NAME AS 'field', 
-                    COLUMN_TYPE AS 'type', 
-                    IS_NULLABLE AS 'is_null' 
-                FROM 
-                    INFORMATION_SCHEMA.COLUMNS 
+                    COLUMN_NAME AS field, 
+                    COLUMN_TYPE AS type, 
+                    IS_NULLABLE AS is_null 
+                FROM INFORMATION_SCHEMA.COLUMNS 
                 WHERE 
                     TABLE_NAME = '$table' AND
                     TABLE_SCHEMA = DATABASE() AND
-                    DATA_TYPE != 'timestamp' AND 
                     EXTRA != 'auto_increment'
             ";
         } else if ($conn == 'pgsql') {
             $query = "
                 SELECT
-                    data_type AS 'type', 
-                    column_name AS 'field', 
-                    is_nullable AS 'is_null'
-                FROM
-                    information_schema.columns
+                    c.column_name AS field,
+                    c.udt_name AS type,
+                    c.is_nullable AS is_null
+                FROM information_schema.columns c
+                LEFT JOIN 
+                    pg_attribute attr ON attr.attrelid = '$table'::regclass AND attr.attname = c.column_name AND attr.atthasdef
+                LEFT JOIN pg_attrdef def ON def.adrelid = attr.attrelid AND def.adnum = attr.attnum
                 WHERE
-                    table_schema = 'public'
-                    AND table_name = '$table';";
+                    c.table_name = '$table'
+                    AND c.table_schema = 'public'
+                    AND (pg_get_expr(def.adbin, def.adrelid) NOT LIKE 'nextval%' OR pg_get_expr(def.adbin, def.adrelid) IS NULL);
+            ";
         } else if ($conn == 'sqlite') {
             $results = DB::select("PRAGMA table_info($table);");
             $query = [];
 
             // sqlite doesn't support aliasing in PRAGMA queries
             foreach ($results as $row) {
-                $query[] = (object) [
-                    'field' => $row->name,
-                    'type' => $row->type,
-                    'is_null' => !$row->notnull,
-                ];
+                // sqlite doesn't have support to filter out auto increment columns
+                if ($row->type !== 'INTEGER' || !$row->pk)
+                    $query[] = (object) [
+                        'field' => $row->name,
+                        'type' => $row->type,
+                        'is_null' => !$row->notnull,
+                    ];
             }
 
             return $query;
