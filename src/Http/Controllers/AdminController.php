@@ -27,8 +27,8 @@ class AdminController extends Controller
         $foreign_keys = collect($this->resolver->foreign_keys($type));
 
         return array_map(function ($column) use ($foreign_keys) {
-            $column->Foreign = $foreign_keys
-                ->filter(fn ($key) => $key->COLUMN_NAME === $column->Field)
+            $column->foreign = $foreign_keys
+                ->filter(fn ($key) => $key->column_name === $column->field)
                 ->first();
 
             return $column;
@@ -102,12 +102,11 @@ class AdminController extends Controller
         $this->hasPrivilege($type, 'Edit');
 
         $columns = collect($this->resolver->getColumns($type));
-        dd($columns);
 
         $data = $type::find(
             $id,
             (clone $columns)
-                ->map(fn ($f) => $f->Field)
+                ->map(fn ($f) => $f->field)
                 ->add((new $type)->getKeyName())
                 ->toArray()
         );

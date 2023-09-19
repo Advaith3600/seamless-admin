@@ -189,22 +189,43 @@ class ModelResolver
         // prepare the SQL query based on the connection type
         if ($conn == 'mysql') {
             $query = "
-            SHOW COLUMNS FROM $table
-            WHERE (
-                type != 'timestamp' AND
-                extra != 'auto_increment'
-            )";
+                SELECT 
+                    COLUMN_NAME AS 'field', 
+                    COLUMN_TYPE AS 'type', 
+                    IS_NULLABLE AS 'is_null' 
+                FROM 
+                    INFORMATION_SCHEMA.COLUMNS 
+                WHERE 
+                    TABLE_NAME = '$table' AND
+                    TABLE_SCHEMA = DATABASE() AND
+                    DATA_TYPE != 'timestamp' AND 
+                    EXTRA != 'auto_increment'
+            ";
         } else if ($conn == 'pgsql') {
             $query = "
-            SELECT
-                *, data_type AS \"Type\", column_name AS \"Field\", is_nullable AS \"Null\"
-            FROM
-                information_schema.columns
-            WHERE
-                table_schema = 'public'
-                AND table_name = '$table';";
+                SELECT
+                    data_type AS 'type', 
+                    column_name AS 'field', 
+                    is_nullable AS 'is_null'
+                FROM
+                    information_schema.columns
+                WHERE
+                    table_schema = 'public'
+                    AND table_name = '$table';";
         } else if ($conn == 'sqlite') {
-            $query = "PRAGMA table_info({$table});";
+            $results = DB::select("PRAGMA table_info($table);");
+            $query = [];
+
+            // sqlite doesn't support aliasing in PRAGMA queries
+            foreach ($results as $row) {
+                $query[] = (object) [
+                    'field' => $row->name,
+                    'type' => $row->type,
+                    'is_null' => !$row->notnull,
+                ];
+            }
+
+            return $query;
         } else {
             throw new UnhandledDatabaseConnection("The database connection '{$conn}' is not currently supported by this package. Please use a supported database connection.");
         }
@@ -229,12 +250,12 @@ class ModelResolver
 
         if ($conn == 'mysql') {
             return DB::select(
-                'SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+                'SELECT column_name, referenced_table_name, referenced_column_name
                 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
                 WHERE (
                     REFERENCED_TABLE_SCHEMA = ? AND
                     TABLE_NAME = ?
-            )',
+                )',
                 [
                     DB::connection()->getDatabaseName(),
                     $table
@@ -242,26 +263,30 @@ class ModelResolver
             );
         } else if ($conn == 'pgsql') {
             return DB::select("
-            SELECT
-                tc.table_schema, 
-                tc.constraint_name, 
-                tc.table_name, 
-                kcu.column_name, 
-                ccu.table_schema AS foreign_table_schema,
-                ccu.table_name AS foreign_table_name,
-                ccu.column_name AS foreign_column_name 
-            FROM 
-                information_schema.table_constraints AS tc 
+                SELECT
+                    kcu.column_name,
+                    ccu.column_name AS referenced_column_name,
+                    ccu.table_name AS referenced_table_name
+                FROM information_schema.table_constraints AS tc 
                 JOIN information_schema.key_column_usage AS kcu
-                ON tc.constraint_name = kcu.constraint_name
-                AND tc.table_schema = kcu.table_schema
+                ON 
+                    tc.constraint_name = kcu.constraint_name
+                    AND tc.table_schema = kcu.table_schema
                 JOIN information_schema.constraint_column_usage AS ccu
                 ON ccu.constraint_name = tc.constraint_name
-                AND ccu.table_schema = tc.table_schema
-            WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name= '{$table}';
-        ");
+                WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name = '$table';
+            ");
+        } else if ($conn == 'sqlite') {
+            return array_map(
+                fn ($item) => (object) [ 
+                    'column_name' => $item->from,
+                    'referenced_table_name' => $item->table,
+                    'referenced_column_name' => $item->to,
+                ],
+                DB::select("PRAGMA foreign_key_list($table);")
+            );
         } else {
-            throw new UnhandledDatabaseConnection("The database connection '{$conn}' is not currently supported by this package. Please use a supported database connection.");
+            throw new UnhandledDatabaseConnection("The database connection '$conn' is not currently supported by this package. Please use a supported database connection.");
         }
     }
 }

@@ -1,59 +1,66 @@
-@php $is_textarea = in_array($column->Type, ['tinytext', 'text', 'mediumtext', 'longtext']); @endphp
+@php $is_textarea = in_array($column->type, ['tinytext', 'text', 'mediumtext', 'longtext']); @endphp
 
 <div class="flex flex-col {{ $is_textarea ? 'md:col-span-2' : '' }}">
     <label
-        for="{{ $column->Field }}"
+        for="{{ $column->field }}"
         class="mb-1 font-semibold"
     >
-        {{ str($column->Field)->ucfirst() }}
+        {{ str($column->field)->ucfirst() }}@if(!$column->is_null)<sup class="text-red-500">*</sup>@endif
     </label>
 
     @if($is_textarea)
         <textarea
             rows="6"
             class="input"
-            id="{{ $column->Field }}"
-            name="{{ $column->Field }}"
-            placeholder="{{ $column->Type }}"
-            {{ $column->Null === 'NO' ? 'required' : '' }}
-        >{{ old($column->Field) ?? $data[$column->Field] ?? '' }}</textarea>
-    @elseif(str_starts_with($column->Type, 'enum'))
-        <select class="input" id="{{ $column->Field }}" name="{{ $column->Field }}">
-            @if($column->Null === 'YES') <option value="">NULL</option> @endif
-            @php preg_match_all("/\\'(\\w+)\\'/", $column->Type, $matches); @endphp
+            id="{{ $column->field }}"
+            name="{{ $column->field }}"
+            placeholder="{{ $column->type }}"
+            {{ $column->is_null ? '' : 'required' }}
+        >{{ old($column->field) ?? $data[$column->field] ?? '' }}</textarea>
+    @elseif(str_starts_with($column->type, 'enum'))
+        <select 
+            class="input" 
+            id="{{ $column->field }}" 
+            name="{{ $column->field }}"
+            {{ $column->is_null ? '' : 'required' }}
+        >
+            @if($column->is_null) <option value="">NULL</option> @endif
+            @php preg_match_all("/\\'(\\w+)\\'/", $column->type, $matches); @endphp
             @foreach ($matches[1] as $option)
                 <option
                     value="{{ $option }}"
-                    {{ (old($column->Field) ?? $data[$column->Field] ?? '') === $option ? 'selected' : '' }}
+                    {{ (old($column->field) ?? $data[$column->field] ?? '') === $option ? 'selected' : '' }}
                 >
                     {{ str($option)->ucfirst() }}
                 </option>
             @endforeach
         </select>
-    @elseif($column->Foreign)
+    @elseif($column->foreign)
         <foreign-selection
             v-cloak
-            type="{{ $column->Type }}"
-            field="{{ $column->Field }}"
-            column_name="{{ $column->Foreign->COLUMN_NAME }}"
-            default="{{ old($column->Field) ?? $data[$column->Field] ?? '' }}"
-            referenced_table_name="{{ $column->Foreign->REFERENCED_TABLE_NAME }}"
-            referenced_column_name="{{ $column->Foreign->REFERENCED_COLUMN_NAME }}"
+            type="{{ $column->type }}"
+            field="{{ $column->field }}"
+            column_name="{{ $column->foreign->column_name }}"
+            default="{{ old($column->field) ?? $data[$column->field] ?? '' }}"
+            referenced_table_name="{{ $column->foreign->referenced_table_name }}"
+            referenced_column_name="{{ $column->foreign->referenced_column_name }}"
             api_endpoint="{{ route('api.admin.type.search_foreign_references', request()->type) }}"></foreign-selection>
     @else
         @php
             $type = 'text';
-            if ($column->Type === 'date') $type = 'date';
-            else if ($column->Type === 'time') $type = 'time';
-            else if ($column->Type === 'datetime') $type = 'datetime-local';
+            if ($column->type === 'date') $type = 'date';
+            else if ($column->type === 'time') $type = 'time';
+            else if ($column->type === 'datetime') $type = 'datetime-local';
         @endphp
         <input
+            step="any"
             class="input"
             type="{{ $type }}"
-            id="{{ $column->Field }}"
-            name="{{ $column->Field }}"
-            placeholder="{{ $column->Type }}"
-            value="{{ old($column->Field) ?? $data[$column->Field] ?? '' }}"
+            id="{{ $column->field }}"
+            name="{{ $column->field }}"
+            placeholder="{{ $column->type }}"
+            {{ $column->is_null ? '' : 'required' }}
+            value="{{ old($column->field) ?? $data[$column->field] ?? '' }}"
         />
     @endif
 </div>
