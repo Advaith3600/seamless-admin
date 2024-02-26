@@ -14,7 +14,10 @@ class ModelResolver
 
     public function __construct()
     {
-        $this->registerModels(app_path('Models/'));
+        $models = config('seamless-admin.models_dir') ?? app_path('Models/');
+        if (!is_dir($models)) $models = app_path();
+
+        $this->registerModels($models);
     }
 
     private function extractFromFolder(string $path): array
@@ -83,7 +86,7 @@ class ModelResolver
             for (; $i < count($tokens); $i++) {
                 if ($tokens[$i][0] === T_NAMESPACE) {
                     for ($j = $i + 1; $j < count($tokens); $j++) {
-                        if ($tokens[$j][0] === T_NAME_QUALIFIED) $namespace .= '\\' . $tokens[$j][1];
+                        if ($tokens[$j][0] === T_STRING || $tokens[$j][0] === T_NAME_QUALIFIED) $namespace .= '\\' . $tokens[$j][1];
                         else if ($tokens[$j] === '{' || $tokens[$j] === ';') break;
                     }
                 }
@@ -191,15 +194,15 @@ class ModelResolver
         // prepare the SQL query based on the connection type
         if ($conn == 'mysql') {
             $query = "
-                SELECT 
-                    COLUMN_NAME AS field, 
-                    COLUMN_TYPE AS type, 
-                    CASE 
+                SELECT
+                    COLUMN_NAME AS field,
+                    COLUMN_TYPE AS type,
+                    CASE
                         WHEN IS_NULLABLE = 'YES' THEN 1
                         ELSE 0
                     END AS is_null
-                FROM INFORMATION_SCHEMA.COLUMNS 
-                WHERE 
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE
                     TABLE_NAME = '$table' AND
                     TABLE_SCHEMA = DATABASE() AND
                     EXTRA != 'auto_increment'
@@ -209,12 +212,12 @@ class ModelResolver
                 SELECT
                     c.column_name AS field,
                     c.udt_name AS type,
-                    CASE 
+                    CASE
                         WHEN c.is_nullable = 'YES' THEN TRUE
                         ELSE FALSE
                     END AS is_null
                 FROM information_schema.columns c
-                LEFT JOIN 
+                LEFT JOIN
                     pg_attribute attr ON attr.attrelid = '$table'::regclass AND attr.attname = c.column_name AND attr.atthasdef
                 LEFT JOIN pg_attrdef def ON def.adrelid = attr.attrelid AND def.adnum = attr.attnum
                 WHERE
@@ -256,7 +259,7 @@ class ModelResolver
     {
         // get the database connection type
         $conn = config('database.default');
-        
+
         // get the table name
         $table = (new $type)->getTable();
 
@@ -279,9 +282,9 @@ class ModelResolver
                     kcu.column_name,
                     ccu.column_name AS referenced_column_name,
                     ccu.table_name AS referenced_table_name
-                FROM information_schema.table_constraints AS tc 
+                FROM information_schema.table_constraints AS tc
                 JOIN information_schema.key_column_usage AS kcu
-                ON 
+                ON
                     tc.constraint_name = kcu.constraint_name
                     AND tc.table_schema = kcu.table_schema
                 JOIN information_schema.constraint_column_usage AS ccu
@@ -290,7 +293,7 @@ class ModelResolver
             ");
         } else if ($conn == 'sqlite') {
             return array_map(
-                fn ($item) => (object) [ 
+                fn ($item) => (object) [
                     'column_name' => $item->from,
                     'referenced_table_name' => $item->table,
                     'referenced_column_name' => $item->to,

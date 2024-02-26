@@ -12,13 +12,13 @@
                     @if(is_string($item))
                         <a
                             href="{{ route('admin.type.index', $resolver->parseType($item) ) }}"
-                            class="{{ str(request()->url())->contains($resolver->parseType($item)) ? 'active' : '' }}"
+                            class="{{ Str::contains(request()->url(), $resolver->parseType($item)) ? 'active' : '' }}"
                         >
                             @if(($icon = (new $item)->adminIcon) !== null)
                                 <i data-feather="{{ $icon }}" class="mr-2"></i>
                             @endif
 
-                            {{ str(class_basename($item))->plural() }}
+                            {{ Str::plural(class_basename($item)) }}
                         </a>
                     @else
                         <a

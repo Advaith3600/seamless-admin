@@ -5,7 +5,7 @@
         for="{{ $column->field }}"
         class="mb-1 font-semibold"
     >
-        {{ str($column->field)->ucfirst() }}@if(!$column->is_null)<sup class="text-red-500">*</sup>@endif
+        {{ Str::ucfirst($column->field) }}@if(!$column->is_null)<sup class="text-red-500">*</sup>@endif
     </label>
 
     @if($is_textarea)
@@ -18,9 +18,9 @@
             {{ $column->is_null ? '' : 'required' }}
         >{{ old($column->field) ?? $data[$column->field] ?? '' }}</textarea>
     @elseif(str_starts_with($column->type, 'enum'))
-        <select 
-            class="input" 
-            id="{{ $column->field }}" 
+        <select
+            class="input"
+            id="{{ $column->field }}"
             name="{{ $column->field }}"
             {{ $column->is_null ? '' : 'required' }}
         >
@@ -31,7 +31,7 @@
                     value="{{ $option }}"
                     {{ (old($column->field) ?? $data[$column->field] ?? '') === $option ? 'selected' : '' }}
                 >
-                    {{ str($option)->ucfirst() }}
+                    {{ Str::ucfirst($option) }}
                 </option>
             @endforeach
         </select>

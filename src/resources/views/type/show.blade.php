@@ -16,7 +16,7 @@
         <div class="mt-4 grid grid-cols-1 gap-1">
             @foreach($data->toArray() as $key => $column)
                 <div class="flex bg-white rounded-lg shadow-sm border p-2">
-                    <div class="opacity-60 mr-2">{{ str($key)->ucfirst() }}:</div>
+                    <div class="opacity-60 mr-2">{{ Str::ucfirst($key) }}:</div>
                     <div>{{ $column }}</div>
                 </div>
             @endforeach

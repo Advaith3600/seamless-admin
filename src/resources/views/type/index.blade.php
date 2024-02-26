@@ -1,5 +1,5 @@
 @php
-    $name = str(class_basename($type))->plural();
+    $name = Str::plural(class_basename($type));
     $instance = new $type;
 @endphp
 
@@ -29,7 +29,7 @@
         <type-index
             data-fetch-url="{{ route('api.admin.type.type_index_data', request()->type) }}"
             key-name="{{ $instance->getKeyName() }}"
-            v-bind:fillable="{!! str(json_encode($instance->adminIndexFields()))->replace('"', '\'') !!}"
+            v-bind:fillable="{!! str_replace('"', '\'', json_encode($instance->adminIndexFields())) !!}"
             v-bind:can-edit="{{ $instance->adminCanAccessEdit() }}"
             v-bind:can-delete="{{ $instance->adminCanAccessDelete() }}"
             v-bind:routes="{

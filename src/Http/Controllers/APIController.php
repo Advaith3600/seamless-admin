@@ -37,7 +37,7 @@ class APIController extends Controller
                 ->get()
                 ->map(fn($item) => [
                     'key' => $item[$keyName],
-                    'string' => str($item)
+                    'string' => (string) $item
                 ])
                 ->toArray();
         }
