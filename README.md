@@ -6,6 +6,8 @@ A seamless Django-like admin panel setup for Laravel. Simple, non-cms table mana
 [![License](http://poser.pugx.org/advaith/seamless-admin/license)](https://packagist.org/packages/advaith/seamless-admin)
 ![Tests](https://github.com/advaith3600/seamless-admin/actions/workflows/run-tests.yml/badge.svg?branch=main)
 
+Laravel versions `6.*`, `7.*`, `8.*`, `9.*`, `10.*`, `11.*` are supported. Please ensure that you have a minimum of PHP `8.0.2` installed.
+
 ## Installation steps
 
 1. Require the Package
