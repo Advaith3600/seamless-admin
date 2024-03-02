@@ -133,8 +133,8 @@
 </template>
 
 <script>
-import VueFeather from './VueFeather';
-import Pagination from './Pagination';
+import VueFeather from './VueFeather.vue';
+import Pagination from './Pagination.vue';
 
 export default {
     components: { VueFeather, Pagination },

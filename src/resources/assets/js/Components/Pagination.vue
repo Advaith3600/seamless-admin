@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import VueFeather from "./VueFeather";
+import VueFeather from "./VueFeather.vue";
 
 export default {
     components: { VueFeather },

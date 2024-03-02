@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import VueFeather from './VueFeather';
+import VueFeather from './VueFeather.vue';
 import { ref, reactive, onUnmounted } from 'vue';
 
 const props = defineProps([

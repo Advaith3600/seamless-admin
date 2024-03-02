@@ -15,8 +15,8 @@ class SeamlessAdminServiceProvider extends ServiceProvider
     public function register(): void
     {
         // registering services in the container
-        $this->app->singleton('modelResolver', fn($app) => new ModelResolver());
-        $this->app->singleton('seamlessAdmin', fn($app) => new SeamlessAdmin());
+        $this->app->singleton('modelResolver', fn() => new ModelResolver());
+        $this->app->singleton('seamlessAdmin', fn() => new SeamlessAdmin());
 
         // registering routes
         $this->mergeConfigFrom(__DIR__ . '/config/config.php', 'seamless-admin');
@@ -34,8 +34,7 @@ class SeamlessAdminServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             // publishing public assets
             $this->publishes([
-                __DIR__ . '/resources/assets/css' => public_path('seamless-admin/css'),
-                __DIR__ . '/resources/assets/js' => public_path('seamless-admin/js')
+                __DIR__ . '/assets' => public_path('seamless-admin'),
             ], 'seamless-admin-assets');
 
             // publishing config file
