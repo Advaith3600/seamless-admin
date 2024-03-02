@@ -5,6 +5,8 @@ namespace Advaith\SeamlessAdmin\Tests;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Advaith\SeamlessAdmin\SeamlessAdminServiceProvider;
 
+use function Orchestra\Testbench\workbench_path;
+
 class TestCase extends OrchestraTestCase
 {
     protected function setUp(): void
@@ -28,7 +30,7 @@ class TestCase extends OrchestraTestCase
             $destinationPath = app_path('User.php');
         }
 
-        $stub = str_replace('UserStubNamespace', $namespace, $stub);
+        $stub = str_replace('{{namespace}}', $namespace, $stub);
         file_put_contents($destinationPath, $stub);
     }
 
@@ -51,11 +53,6 @@ class TestCase extends OrchestraTestCase
 
     protected function defineDatabaseMigrations()
     {
-        $this->loadMigrationsFrom(base_path('database/migrations'));
-    }
-
-    protected function getBasePath(): string
-    {
-        return __DIR__ . '/../vendor/laravel/laravel';
+        $this->loadMigrationsFrom(workbench_path('database/migrations'));
     }
 }

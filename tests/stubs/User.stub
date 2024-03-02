@@ -1,6 +1,6 @@
 <?php
 
-namespace UserStubNamespace;
+namespace {{namespace}};
 
 use Advaith\SeamlessAdmin\Traits\SeamlessAdmin;
 use Illuminate\Foundation\Auth\User as Authenticatable;
