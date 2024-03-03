@@ -3,10 +3,10 @@
         <div class="flex justify-between items-center mt-4 mb-2">
             <form class="flex gap-2" @submit.prevent="onSearch">
                 <div class="search">
-                    <input
+
+                    <Input
                         type="text"
                         :placeholder="'Search in ' + fillable.join(', ')"
-                        class="input"
                         v-model="search"
                     />
                     <div class="icon">
@@ -25,14 +25,15 @@
                 </select>
             </form>
 
-            <a
-                v-if="canDelete && selected.size > 0"
-                :href="routes.delete + '?' + massDeleteURI()"
-                class="btn red"
-            >
-                <vue-feather type="trash-2"></vue-feather>
-                Delete
-            </a>
+            <Button asChild variant="destructive">
+                <a
+                    v-if="canDelete && selected.size > 0"
+                    :href="routes.delete + '?' + massDeleteURI()"
+                >
+                    <vue-feather type="trash-2"></vue-feather>
+                    Delete
+                </a>
+            </Button>
         </div>
 
         <div class="overflow-auto">
@@ -135,9 +136,11 @@
 <script>
 import VueFeather from './VueFeather.vue';
 import Pagination from './Pagination.vue';
+import Input from '@/components/ui/input/Input.vue';
+import Button from '@/components/ui/button/Button.vue';
 
 export default {
-    components: { VueFeather, Pagination },
+    components: { VueFeather, Pagination, Input, Button },
     props: [
         'dataFetchUrl',
         'canEdit',

@@ -10,7 +10,7 @@
   },
   "framework": "laravel",
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils"
+    "components": "/src/resources/assets/components",
+    "utils": "/src/resources/assets/lib/utils"
   }
 }

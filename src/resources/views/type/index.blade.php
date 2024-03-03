@@ -12,21 +12,23 @@
 @endsection
 
 @section('content')
-    <div class="container mx-auto px-4 py-2">
+    <div class="container mx-auto px-4 py-2" id="app">
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">
                 Manage {{ $name }}
             </h2>
 
             @if($instance->adminCanAccessCreate())
-                <a class="btn" href="{{ route('admin.type.create', request()->type) }}">
-                    <i data-feather="plus"></i>
-                    Create
-                </a>
+                <sa-button as-child>
+                    <a href="{{ route('admin.type.create', request()->type) }}">
+                        <i data-feather="plus"></i>
+                        Create
+                    </a>
+                </sa-button>
             @endif
         </div>
 
-        <div id="app">
+        <div>
             <type-index
                 data-fetch-url="{{ route('api.admin.type.type_index_data', request()->type) }}"
                 key-name="{{ $instance->getKeyName() }}"

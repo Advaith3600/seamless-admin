@@ -3,8 +3,8 @@
     "file": "assets/VueFeather-Co2WEuhb.css",
     "src": "_VueFeather-!~{005}~.js"
   },
-  "_VueFeather-Bf5e6Pfw.js": {
-    "file": "assets/VueFeather-Bf5e6Pfw.js",
+  "_VueFeather-LP1Aqx4j.js": {
+    "file": "assets/VueFeather-LP1Aqx4j.js",
     "css": [
       "assets/VueFeather-Co2WEuhb.css"
     ]
@@ -15,26 +15,26 @@
     "isEntry": true
   },
   "src/resources/assets/js/foreign-selection.js": {
-    "file": "assets/foreign-selection-D0DOWt9Y.js",
+    "file": "assets/foreign-selection-CZuf2m9V.js",
     "src": "src/resources/assets/js/foreign-selection.js",
     "isEntry": true,
     "imports": [
-      "_VueFeather-Bf5e6Pfw.js"
+      "_VueFeather-LP1Aqx4j.js"
     ],
     "css": [
       "assets/foreign-selection-iGf2nidU.css"
     ]
   },
   "src/resources/assets/js/type-index.js": {
-    "file": "assets/type-index-DOQvqqQY.js",
+    "file": "assets/type-index-DC8OI57u.js",
     "src": "src/resources/assets/js/type-index.js",
     "isEntry": true,
     "imports": [
-      "_VueFeather-Bf5e6Pfw.js"
+      "_VueFeather-LP1Aqx4j.js"
     ]
   },
   "src/resources/assets/scss/app.scss": {
-    "file": "assets/app-BWZrHr48.css",
+    "file": "assets/app-D_C-vKNQ.css",
     "src": "src/resources/assets/scss/app.scss",
     "isEntry": true
   }

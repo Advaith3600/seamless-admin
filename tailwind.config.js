@@ -7,7 +7,7 @@ module.exports = {
 
   content: [
     "./src/resources/views/**/*.blade.php",
-    "./src/resources/assets/js/**/*.{ts,tsx,vue}",
+    "./src/resources/assets/**/*.{ts,tsx,vue}",
     "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
   ],
 
