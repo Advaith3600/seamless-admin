@@ -1,33 +1,36 @@
 {
-  "_common-components-D5IPcBpq.js": {
-    "file": "assets/common-components-D5IPcBpq.js"
+  "_common-components-a90jO93J.js": {
+    "file": "assets/common-components-a90jO93J.js"
   },
   "src/resources/assets/js/app.js": {
-    "file": "assets/app-l0sNRNKZ.js",
+    "file": "assets/app-DwCuVbjb.js",
     "src": "src/resources/assets/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_common-components-a90jO93J.js"
+    ]
   },
   "src/resources/assets/js/foreign-selection.js": {
-    "file": "assets/foreign-selection-1xAzf5GO.js",
+    "file": "assets/foreign-selection-aMYMzrlk.js",
     "src": "src/resources/assets/js/foreign-selection.js",
     "isEntry": true,
     "imports": [
-      "_common-components-D5IPcBpq.js"
+      "_common-components-a90jO93J.js"
     ],
     "css": [
       "assets/foreign-selection-iGf2nidU.css"
     ]
   },
   "src/resources/assets/js/type-index.js": {
-    "file": "assets/type-index-Bu6BzMR-.js",
+    "file": "assets/type-index-D1RYomFA.js",
     "src": "src/resources/assets/js/type-index.js",
     "isEntry": true,
     "imports": [
-      "_common-components-D5IPcBpq.js"
+      "_common-components-a90jO93J.js"
     ]
   },
   "src/resources/assets/scss/app.scss": {
-    "file": "assets/app-DGhspP-5.css",
+    "file": "assets/app-eN5enL4q.css",
     "src": "src/resources/assets/scss/app.scss",
     "isEntry": true
   }

@@ -1,6 +1,7 @@
 @php
     $name = Str::plural(class_basename($type));
     $instance = new $type;
+    $count = $instance->count();
 @endphp
 
 @extends(config('seamless-admin.layout'))
@@ -14,14 +15,17 @@
 @section('content')
     <div class="container mx-auto px-4 py-2" id="app">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-semibold">
-                Manage {{ $name }}
-            </h2>
+            <div>
+                <h2 class="text-3xl sm:text-4xl font-bold">
+                    Manage {{ $name }}
+                </h2>
+                <div>{{ $count }} {{ Str::plural('item', $count) }} found</div>
+            </div>
 
             @if($instance->adminCanAccessCreate())
                 <sa-button as-child>
                     <a href="{{ route('admin.type.create', request()->type) }}">
-                        <i data-feather="plus"></i>
+                        <plus-icon :size="18"></plus-icon>
                         Create
                     </a>
                 </sa-button>

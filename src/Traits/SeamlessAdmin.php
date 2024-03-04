@@ -5,13 +5,24 @@ namespace Advaith\SeamlessAdmin\Traits;
 trait SeamlessAdmin
 {
     /**
+     *  Whether the key name should be visible for admins
+     *  Default: true
+     */
+    public bool $keyNameVisibleForAdmins = true;
+
+    /**
      * Determines the information shown on the index page of the model listing
      *
      * @return array
      */
     public function adminIndexFields(): array
     {
-        return array_diff($this->getFillable(), $this->getHidden());
+        $fillable = $this->getFillable();
+        if ($this->keyNameVisibleForAdmins && !in_array($this->getKeyName(), $fillable)) {
+            array_unshift($fillable, $this->getKeyName());
+        }
+
+        return array_diff($fillable, $this->getHidden());
     }
 
     /**

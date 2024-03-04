@@ -15,7 +15,7 @@
                             class="{{ Str::contains(request()->url(), $resolver->parseType($item)) ? 'active' : '' }}"
                         >
                             @if(($icon = (new $item)->adminIcon) !== null)
-                                <i data-feather="{{ $icon }}" class="mr-2"></i>
+                                <i data-lucide="{{ $icon }}" class="mr-2"></i>
                             @endif
 
                             {{ Str::plural(class_basename($item)) }}
@@ -26,7 +26,7 @@
                             class="{{ Route::is("{$item['name']}.*") || Route::is($item['name']) ? 'active' : '' }}"
                         >
                             @if(isset($item['options']['icon']))
-                                <i data-feather="{{ $item['options']['icon'] }}" class="mr-2"></i>
+                                <i data-lucide="{{ $item['options']['icon'] }}" class="mr-2"></i>
                             @endif
 
                             {{ $item['alias'] }}
