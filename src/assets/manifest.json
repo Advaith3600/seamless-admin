@@ -1,36 +1,41 @@
 {
-  "_common-components-a90jO93J.js": {
-    "file": "assets/common-components-a90jO93J.js"
+  "_common-components-D7ucHL9O.js": {
+    "file": "assets/common-components-D7ucHL9O.js"
+  },
+  "_search-D02H-_k6.js": {
+    "file": "assets/search-D02H-_k6.js",
+    "imports": [
+      "_common-components-D7ucHL9O.js"
+    ]
   },
   "src/resources/assets/js/app.js": {
-    "file": "assets/app-DwCuVbjb.js",
+    "file": "assets/app-Dt0xIl_Y.js",
     "src": "src/resources/assets/js/app.js",
     "isEntry": true,
     "imports": [
-      "_common-components-a90jO93J.js"
+      "_common-components-D7ucHL9O.js"
     ]
   },
   "src/resources/assets/js/foreign-selection.js": {
-    "file": "assets/foreign-selection-aMYMzrlk.js",
+    "file": "assets/foreign-selection-BGtB0-TX.js",
     "src": "src/resources/assets/js/foreign-selection.js",
     "isEntry": true,
     "imports": [
-      "_common-components-a90jO93J.js"
-    ],
-    "css": [
-      "assets/foreign-selection-iGf2nidU.css"
+      "_common-components-D7ucHL9O.js",
+      "_search-D02H-_k6.js"
     ]
   },
   "src/resources/assets/js/type-index.js": {
-    "file": "assets/type-index-D1RYomFA.js",
+    "file": "assets/type-index-C0T3-Z2I.js",
     "src": "src/resources/assets/js/type-index.js",
     "isEntry": true,
     "imports": [
-      "_common-components-a90jO93J.js"
+      "_common-components-D7ucHL9O.js",
+      "_search-D02H-_k6.js"
     ]
   },
   "src/resources/assets/scss/app.scss": {
-    "file": "assets/app-eN5enL4q.css",
+    "file": "assets/app-OIJNIqk1.css",
     "src": "src/resources/assets/scss/app.scss",
     "isEntry": true
   }

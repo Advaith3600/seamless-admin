@@ -85,7 +85,4 @@ h1, h2, h3, h4 { line-height: 1; }
 [v-cloak] { display: none; }
 
 @import 'variables';
-@import 'helper';
-
-// css for the layout
 @import 'layout';
