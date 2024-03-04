@@ -11,9 +11,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
 {{--custom css--}}
 @vite('src/resources/assets/scss/app.scss', 'seamless-admin')
-
-{{--scripts--}}
-<script src="https://unpkg.com/feather-icons@4.29.0/dist/feather.min.js" defer></script>
-@vite('src/resources/assets/js/app.js', 'seamless-admin')
+<script src="https://unpkg.com/lucide@latest" defer></script>
 
 @yield('header')

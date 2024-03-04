@@ -5,3 +5,18 @@
 </footer>
 
 @yield('footer')
+
+<script>
+    if ('lucide' in window)
+        lucide.createIcons();
+
+    document.getElementById('hamburger')?.addEventListener('click', () => {
+        document.getElementById('sidebar-container')?.classList?.add('active');
+        document.getElementById('sidebar-backdrop')?.classList?.add('active');
+    });
+
+    document.getElementById('sidebar-backdrop')?.addEventListener('click', () => {
+        document.getElementById('sidebar-container')?.classList?.remove('active');
+        document.getElementById('sidebar-backdrop')?.classList?.remove('active');
+    })
+</script>

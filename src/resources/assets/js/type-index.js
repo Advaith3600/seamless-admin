@@ -1,11 +1,11 @@
 import { createApp } from 'vue';
 
 import TypeIndex from './Components/TypeIndex.vue';
-import Button from '@/components/ui/button/Button.vue';
+import commonComponents from './common-components';
 
 createApp({
     components: {
         'type-index': TypeIndex,
-        'sa-button': Button
+        ...commonComponents,
     }
 }).mount('#app')

@@ -1,245 +1,228 @@
-<template>
-    <div>
-        <div class="flex justify-between items-center mt-4 mb-2">
-            <form class="flex gap-2" @submit.prevent="onSearch">
-                <div class="search">
+<script setup lang="ts">
+import {
+  FlexRender,
+  useVueTable,
+  getCoreRowModel,
+} from '@tanstack/vue-table'
+import { ArrowUpDown, ChevronDown } from 'lucide-vue-next'
 
-                    <Input
-                        type="text"
-                        :placeholder="'Search in ' + fillable.join(', ')"
-                        v-model="search"
-                    />
-                    <div class="icon">
-                        <vue-feather type="search"></vue-feather>
-                    </div>
-                </div>
+import { h, ref } from 'vue'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Pagination,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationLast,
+  PaginationList,
+  PaginationListItem,
+  PaginationNext,
+  PaginationPrev,
+} from '@/components/ui/pagination';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { valueUpdater } from '@/lib/utils'
 
-                <select
-                    name="perPage"
-                    id="perPage"
-                    class="input"
-                    v-model="perPage"
-                    @change="onSearch"
-                >
-                    <option v-for="page in [5, 10, 20, 50, 100]" :value="page">{{ page }}</option>
-                </select>
-            </form>
+const props = defineProps([
+  'dataFetchUrl',
+  'canEdit',
+  'canDelete',
+  'keyName',
+  'fillable',
+  'routes'
+]);
 
-            <Button asChild variant="destructive">
-                <a
-                    v-if="canDelete && selected.size > 0"
-                    :href="routes.delete + '?' + massDeleteURI()"
-                >
-                    <vue-feather type="trash-2"></vue-feather>
-                    Delete
-                </a>
-            </Button>
-        </div>
+const ucfirst = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 
-        <div class="overflow-auto">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>
-                        <input
-                            type="checkbox"
-                            :checked="selected.size === data.length"
-                            @click="checkAll"
-                        />
-                    </th>
+const columns = [
+  {
+    id: 'select',
+    header: ({ table }) => h(Checkbox, {
+      'checked': table.getIsAllPageRowsSelected(),
+      'onUpdate:checked': value => table.toggleAllPageRowsSelected(!!value),
+      'ariaLabel': 'Select all',
+    }),
+    cell: ({ row }) => h(
+      'div',
+      { class: 'flex items-center' },
+      h(Checkbox, {
+        'checked': row.getIsSelected(),
+        'onUpdate:checked': value => row.toggleSelected(!!value),
+        'ariaLabel': 'Select row',
+      }
+    )),
+    enableSorting: false,
+    enableHiding: false,
+  },
+]
 
-                    <th v-for="item in fillable">
-                        <div
-                            class="flex justify-between items-center sort gap-2"
-                            :class="item === by && (order === 'asc' ? 'up' : 'down')"
-                            @click="sort(item)"
-                        >
-                            <div v-text="ucfirst(item)"></div>
-                            <div class="flex flex-col">
-                                <div class="up flex" :class.light="![keyName, item].includes(by)">
-                                    <vue-feather type="chevron-up" strokeWidth="3"></vue-feather>
-                                </div>
-                                <div class="down flex" :class.light="![keyName, item].includes(by)">
-                                    <vue-feather type="chevron-down" strokeWidth="3"></vue-feather>
-                                </div>
-                            </div>
-                        </div>
-                    </th>
+props.fillable.forEach((column) => {
+  columns.push({
+    id: column,
+    header: ({ table }) => h('div', {}, ucfirst(column)),
+    cell: ({ row }) => h('div', {}, row.original[column]),
+  })
+})
 
-                    <th></th>
-                </tr>
-                </thead>
+const data = ref([]);
+const meta = ref({});
+const filters = ref({
+  page: 1,
+  search: '',
+});
 
-                <tbody>
-                <tr
-                    v-for="row in data"
-                    :class="{ selected: selected.has(row[keyName]) }"
-                    @click="redirect(routes.show.replace('%key%', row[keyName]))"
-                >
-                    <td>
-                        <input
-                            type="checkbox"
-                            :checked="selected.has(row[keyName])"
-                            @change="checkIndividual(row[keyName])"
-                            @click.stop
-                        />
-                    </td>
-                    <td v-for="f in fillable">{{ row[f] }}</td>
-                    <td>
-                        <div class="flex gap-3">
-                            <a
-                                v-if="canEdit"
-                                :href="routes.edit.replace('%key%', row[keyName])"
-                                class="btn yellow small link"
-                                @click.stop
-                            >
-                                <vue-feather type="edit"></vue-feather>
-                                Edit
-                            </a>
-                            <a
-                                v-if="canDelete"
-                                :href="deleteURL(row[keyName])"
-                                class="btn red small link"
-                                @click.stop
-                            >
-                                <vue-feather type="trash-2"></vue-feather>
-                                Delete
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <tr v-if="data.length === 0">
-                    <td :colspan="fillable.length + 2" class="text-center">No data found</td>
-                </tr>
-                <tr v-if="loading" class="loader">
-                    <vue-feather type="loader" animation="spin" stroke="white" size="38"></vue-feather>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+const params = new URLSearchParams();
+let loading = false;
+const fetchData = async () => {
+  if (loading) return;
+  loading = true;
 
-        <div class="mt-4" v-if="Object.keys(meta).length">
-            <pagination
-                :total-pages="meta.last_page"
-                :total="meta.total"
-                :per-page="meta.per_page"
-                :current-page="meta.current_page"
-                :has-more-pages="meta.current_page < meta.last_page"
-                :from="meta.from"
-                :to="meta.to"
-                @pagechanged="changePage($event)"
-            ></pagination>
-        </div>
-    </div>
-</template>
+  for (const [key, value] of Object.entries(filters.value)) {
+    params.set(key, value);
+  }
 
-<script>
-import VueFeather from './VueFeather.vue';
-import Pagination from './Pagination.vue';
-import Input from '@/components/ui/input/Input.vue';
-import Button from '@/components/ui/button/Button.vue';
+  const res = await fetch(props.dataFetchUrl + '?' + params.toString(), {
+    headers: {
+      Accept: 'application/json'
+    }
+  })
+  const json = await res.json();
 
-export default {
-    components: { VueFeather, Pagination, Input, Button },
-    props: [
-        'dataFetchUrl',
-        'canEdit',
-        'canDelete',
-        'keyName',
-        'fillable',
-        'routes'
-    ],
-    data() {
-        return {
-            selected: new Set,
-
-            page: 1,
-            search: '',
-            perPage: 10,
-            by: this.keyName,
-            order: 'desc',
-
-            loading: true,
-            data: [],
-            meta: {}
-        }
-    },
-    methods: {
-        ucfirst(value) {
-            return value.charAt(0).toUpperCase() + value.slice(1);
-        },
-        checkIndividual(id) {
-            if (this.selected.has(id)) this.selected.delete(id);
-            else this.selected.add(id);
-        },
-        checkAll() {
-            if (this.selected.size === this.data.length) this.selected = new Set;
-            else this.selected = new Set(this.data.map(u => u[this.keyName]))
-        },
-        massDeleteURI() {
-            return encodeURI([...this.selected].map((u, i) => `ids[${i}]=${u}`).join('&'));
-        },
-        deleteURL(key) {
-            return encodeURI(`${this.routes.delete}?ids[0]=${key}`);
-        },
-        redirect(url) {
-            location.href = url;
-        },
-        encodeQueryString() {
-            const url = new URL(window.location);
-            ['page', 'search', 'perPage', 'by', 'order'].forEach(item =>
-                url.searchParams.set(item, this[item]))
-            return url;
-        },
-        sort(by) {
-            if (by === this.by && this.order === 'desc') {
-                this.by = this.keyName;
-                this.order = 'desc';
-            } else {
-                if (this.by === by) this.order = 'desc';
-                else this.order = 'asc';
-                this.by = by;
-            }
-
-            this.updateState();
-        },
-        changePage(page) {
-            this.page = page;
-            this.updateState();
-        },
-        onSearch() {
-            this.page = 1;
-            this.updateState();
-        },
-        updateState() {
-            window.history.pushState({}, '', this.encodeQueryString());
-            this.fetchData();
-        },
-        fetchData() {
-            const apiConfig = {
-                headers: {
-                    Accept: 'application/json'
-                }
-            };
-
-            this.loading = true;
-            fetch(this.dataFetchUrl + this.encodeQueryString().search, apiConfig)
-                .then(res => res.json())
-                .then(response => {
-                    this.meta = response;
-                    this.data = response.data;
-                    this.loading = false;
-                })
-        }
-    },
-    created() {
-        const url = new URL(window.location);
-        ['search', 'perPage', 'order', 'by', 'page'].forEach(item => {
-            if (url.searchParams.has(item))
-                this[item] = url.searchParams.get(item);
-        });
-
-        this.fetchData();
-    },
+  loading = false;
+  meta.value = json;
+  data.value = json.data;
 }
+
+fetchData();
+
+const table = useVueTable({
+  get data() { return data.value },
+  getCoreRowModel: getCoreRowModel(),
+  columns,
+  manualFiltering: true,
+  onGlobalFilterChange: (search) => {
+    filters.value.search = search;
+    fetchData();
+  },
+})
+
+const updatePage = (i) => {
+  filters.value.page = i;
+  fetchData();
+}
+
+const isMobile = window.innerWidth <= 768;
 </script>
+
+<template>
+  <div class="w-full">
+    <div class="flex gap-2 items-center py-4">
+      <Input
+        class="max-w-sm"
+        :placeholder="'Search in ' + props.fillable.join(', ')"
+        :model-value="filters.search"
+        @update:model-value="table.setGlobalFilter($event)"
+      />
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Button variant="outline" class="ml-auto">
+            Columns <ChevronDown class="ml-2 h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuCheckboxItem
+            v-for="column in table.getAllColumns().filter((column) => column.getCanHide())"
+            :key="column.id"
+            class="capitalize"
+            :checked="column.getIsVisible()"
+            @update:checked="(value) => {
+              column.toggleVisibility(!!value)
+            }"
+          >
+            {{ column.id }}
+          </DropdownMenuCheckboxItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+    <div class="rounded-md border bg-white">
+      <Table>
+        <TableHeader>
+          <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+            <TableHead v-for="header in headerGroup.headers" :key="header.id">
+              <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <template v-if="table.getRowModel().rows?.length">
+            <TableRow
+              v-for="row in table.getRowModel().rows"
+              :key="row.id"
+              :data-state="row.getIsSelected() && 'selected'"
+            >
+              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+              </TableCell>
+            </TableRow>
+          </template>
+
+          <TableRow v-else>
+            <TableCell
+              col-span="{columns.length}"
+              class="h-24 text-center"
+            >
+              No results.
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 py-4 sm:flex-row flex-col">
+      <div class="flex-1 text-sm text-muted-foreground">
+        Showing {{ meta.from }} to {{ meta.to }} of {{ meta.total }} results
+      </div>
+      <div>
+        <Pagination
+          v-slot="{ page }"
+          :total="meta.total"
+          :show-edges="!isMobile"
+          :page="meta.current_page"
+          :items-per-page="meta.per_page"
+          :siblingCount="isMobile ? 0 : 1"
+          @update:page="updatePage"
+        >
+          <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+            <PaginationFirst />
+            <PaginationPrev />
+
+            <template v-for="(item, index) in items">
+              <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+                <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                  {{ item.value }}
+                </Button>
+              </PaginationListItem>
+              <PaginationEllipsis v-else :key="item.type" :index="index" />
+            </template>
+
+            <PaginationNext />
+            <PaginationLast />
+          </PaginationList>
+        </Pagination>
+      </div>
+    </div>
+  </div>
+</template>
