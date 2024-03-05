@@ -55,7 +55,7 @@ const onFilter = val => val;
 
 <template>
   <div>
-    <input type="hidden" :name="props.field" :value="value.key"/>
+    <input type="hidden" :name="props.field" :value="value?.key"/>
     <Popover v-model:open="open">
       <PopoverTrigger as-child>
         <Button
@@ -88,7 +88,7 @@ const onFilter = val => val;
                 <Check
                   :class="cn(
                     'mr-2 h-4 w-4',
-                    value.key == option.key ? 'opacity-100' : 'opacity-0',
+                    value && value.key == option.key ? 'opacity-100' : 'opacity-0',
                   )"
                 />
                 <span class="mr-2">{{ props.referenced_column_name }}: {{ option.key }}</span>
