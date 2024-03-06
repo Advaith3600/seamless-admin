@@ -6,6 +6,8 @@ A seamless Django-like admin panel setup for Laravel. Simple, non-cms table mana
 [![License](http://poser.pugx.org/advaith/seamless-admin/license)](https://packagist.org/packages/advaith/seamless-admin)
 ![Tests](https://github.com/advaith3600/seamless-admin/actions/workflows/run-tests.yml/badge.svg?branch=main)
 
+![Screenshot](Screenshot.png)
+
 ## Installation steps
 
 1. Require the Package
@@ -57,8 +59,6 @@ class Post extends Model
 ```
 
 Et Voila! That's all you have to do to get started. Visit `/admin` to access the admin dashboard after logging in.
-
-![Screenshot](Screenshot.png)
 
 ## Configuration
 
