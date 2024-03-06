@@ -8,6 +8,8 @@ A seamless Django-like admin panel setup for Laravel. Simple, non-cms table mana
 
 ![Screenshot](Screenshot.png)
 
+Laravel versions `6.*`, `7.*`, `8.*`, `9.*`, `10.*`, `11.*` are supported. Please ensure that you have a minimum of PHP `8.0.2` installed.
+
 ## Installation steps
 
 1. Require the Package

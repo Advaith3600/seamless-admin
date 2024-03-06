@@ -2,6 +2,7 @@
 
 namespace Advaith\SeamlessAdmin\Tests;
 
+use Illuminate\Database\Schema\Blueprint;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Advaith\SeamlessAdmin\SeamlessAdminServiceProvider;
 
@@ -22,14 +23,21 @@ class TestCase extends OrchestraTestCase
 
         if ($hasModelsPrefix) {
             $namespace = 'App\\Models';
-            $destinationPath = app_path('Models/User.php');
+            $destinationPath = 'Models/User.php';
         } else {
             $namespace = 'App';
-            $destinationPath = app_path('User.php');
+            $destinationPath = 'User.php';
         }
 
-        $stub = str_replace('UserStubNamespace', $namespace, $stub);
-        file_put_contents($destinationPath, $stub);
+        $locations = [
+            app_path($destinationPath),
+            __DIR__ . '/../vendor/laravel/laravel/app/' . $destinationPath
+        ];
+
+        $stub = str_replace('{{namespace}}', $namespace, $stub);
+        foreach ($locations as $location) {
+            file_put_contents($location, $stub);
+        }
     }
 
     protected function getPackageProviders($app): array
@@ -49,13 +57,18 @@ class TestCase extends OrchestraTestCase
         ]);
     }
 
-    protected function defineDatabaseMigrations()
+    protected function setUpDatabase($app)
     {
-        $this->loadMigrationsFrom(base_path('database/migrations'));
-    }
+        $schema = $app['db']->connection()->getSchemaBuilder();
 
-    protected function getBasePath(): string
-    {
-        return __DIR__ . '/../vendor/laravel/laravel';
+        $schema->create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+        });
     }
 }
