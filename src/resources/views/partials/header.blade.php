@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
 {{--custom css--}}
-@vite('src/resources/assets/scss/app.scss', 'seamless-admin')
+@saSafeVite('src/resources/assets/scss/app.scss')
 
-@vite('src/resources/assets/js/navbar.js', 'seamless-admin')
+@saSafeVite('src/resources/assets/js/navbar.js')
 <script src="https://unpkg.com/lucide@latest" defer></script>
 
 @yield('header')

@@ -5,7 +5,7 @@
 @section('title', "Edit $name")
 
 @section('header')
-    @vite('src/resources/assets/js/foreign-selection.js', 'seamless-admin')
+    @saSafeVite('src/resources/assets/js/foreign-selection.js')
 @endsection
 
 @section('content')

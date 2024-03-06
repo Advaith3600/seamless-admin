@@ -8,7 +8,7 @@
 @section('title', "$name")
 
 @section('header')
-    @vite('src/resources/assets/js/app.js', 'seamless-admin')
+    @saSafeVite('src/resources/assets/js/app.js')
 @endsection
 
 @section('content')

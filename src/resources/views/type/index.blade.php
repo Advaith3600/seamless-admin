@@ -9,7 +9,7 @@
 @section('title', "Manage $name")
 
 @section('header')
-    @vite('src/resources/assets/js/type-index.js', 'seamless-admin')
+    @saSafeVite('src/resources/assets/js/type-index.js')
 @endsection
 
 @section('content')
