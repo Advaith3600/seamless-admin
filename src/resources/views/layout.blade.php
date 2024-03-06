@@ -3,10 +3,10 @@
 <head>
     @include('seamless::partials.header')
 </head>
-<body>
+<body class="bg-background text-foreground">
     <div id="sidebar-backdrop"></div>
 
-    <section id="sidebar-container">
+    <section id="sidebar-container" class="dark bg-card text-card-foreground">
         @include('seamless::partials.logo')
 
         @include('seamless::partials.sidebar')

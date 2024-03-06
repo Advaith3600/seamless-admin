@@ -2,8 +2,6 @@ $sidebar-width: 300px;
 
 body {
     min-height: 100dvh;
-    background: var(--seamless-background);
-    color: var(--seamless-color);
 }
 
 #main {
@@ -20,14 +18,10 @@ body {
 }
 
 #logo {
-    background: var(--seamless-sidebar-background);
-    color: var(--seamless-sidebar-color);
     width: $sidebar-width;
 }
 
 #sidebar {
-    background: var(--seamless-sidebar-background);
-    color: var(--seamless-sidebar-color);
     overflow-y: auto;
     height: 100%;
     width: $sidebar-width;

@@ -204,7 +204,7 @@ const isMobile = computed(() => window.innerWidth <= 768)
   <div class="w-full">
     <div
       v-if="table.getIsSomeRowsSelected() || table.getIsAllPageRowsSelected()"
-      class="fixed top-0 inset-x-0 bg-white shadow-lg flex items-center justify-end p-4 z-20"
+      class="fixed top-0 inset-x-0 bg-card/70 backdrop-blur shadow-lg flex items-center justify-end p-4 z-20"
     >
       <Button variant="destructive" @click="deleteSelected" size="sm">
         <Trash2Icon />
@@ -250,7 +250,7 @@ const isMobile = computed(() => window.innerWidth <= 768)
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-    <div class="rounded-md border bg-white relative overflow-hidden">
+    <div class="rounded-md border bg-card relative overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">

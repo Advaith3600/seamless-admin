@@ -10,6 +10,7 @@ export default defineConfig({
             input: [
                 'src/resources/assets/scss/app.scss',
                 'src/resources/assets/js/app.js',
+                'src/resources/assets/js/navbar.js',
                 'src/resources/assets/js/type-index.js',
                 'src/resources/assets/js/foreign-selection.js',
             ],

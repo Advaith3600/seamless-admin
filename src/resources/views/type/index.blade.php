@@ -25,7 +25,7 @@
             @if($instance->adminCanAccessCreate())
                 <sa-button as-child>
                     <a href="{{ route('admin.type.create', request()->type) }}">
-                        <i data-lucide="plus"></i>
+                        <i data-lucide="plus" class="size-4"></i>
                         Create
                     </a>
                 </sa-button>

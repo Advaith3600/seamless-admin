@@ -19,7 +19,7 @@
 
         <div class="mt-4 space-y-1">
             @foreach($data->toArray() as $key => $column)
-                <div class="flex bg-white rounded-md border p-2">
+                <div class="flex bg-card rounded-md border p-2">
                     <div class="opacity-60 mr-2">{{ $key }}:</div>
                     <div>{{ $column }}</div>
                 </div>
