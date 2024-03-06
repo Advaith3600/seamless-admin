@@ -265,7 +265,10 @@ class ModelResolver
 
         if ($conn == 'mysql') {
             return DB::select(
-                'SELECT column_name, referenced_table_name, referenced_column_name
+                'SELECT
+                    column_name as column_name,
+                    referenced_table_name as referenced_table_name,
+                    referenced_column_name as referenced_column_name
                 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
                 WHERE (
                     REFERENCED_TABLE_SCHEMA = ? AND

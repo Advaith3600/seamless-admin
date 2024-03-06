@@ -1,0 +1,119 @@
+$sidebar-width: 300px;
+
+body {
+    min-height: 100dvh;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+}
+
+#footer {
+    margin-top: auto;
+    text-align: center;
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+#logo {
+    width: $sidebar-width;
+}
+
+#sidebar {
+    overflow-y: auto;
+    height: 100%;
+    width: $sidebar-width;
+
+    ul {
+        padding: 0 0 0.5rem;
+        @apply space-y-1;
+
+        li {
+            padding: 0 0.5rem;
+
+            &.blank {
+                padding: 0.75rem 1rem;
+            }
+
+            &.nav-group {
+                text-transform: uppercase;
+                font-size: 13px;
+                opacity: 0.6;
+                font-weight: bold;
+                padding: 0.5rem 1.25rem 0;
+            }
+
+            a {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                transition: background 250ms ease;
+                border-radius: 6px;
+                @apply px-3 py-1.5;
+                &:hover {
+                    background: rgba(255, 255, 255, .1);
+                }
+
+                &.active {
+                    background: rgba(255, 255, 255, .15);
+                }
+
+                svg {
+                    width: 18px;
+                    height: 18px;
+                }
+            }
+        }
+    }
+}
+
+#sidebar-backdrop {
+    position: fixed;
+    z-index: 8;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(0 0 0 / 60%);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 250ms;
+}
+
+#sidebar-container {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: 250ms;
+    transition-property: transform, opacity;
+}
+
+@media screen and (max-width: theme('screens.md')) {
+    #sidebar-backdrop.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    #sidebar-container.active {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+@screen md {
+    body {
+        padding-left: $sidebar-width;
+    }
+
+    #sidebar-container {
+        transform: none;
+        opacity: 1;
+    }
+}

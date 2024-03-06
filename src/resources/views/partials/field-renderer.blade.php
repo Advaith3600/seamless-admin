@@ -1,40 +1,33 @@
-@php $is_textarea = in_array($column->type, ['tinytext', 'text', 'mediumtext', 'longtext']); @endphp
+@php $is_textarea = in_array(strtolower($column->type), ['tinytext', 'text', 'mediumtext', 'longtext']); @endphp
 
-<div class="flex flex-col {{ $is_textarea ? 'md:col-span-2' : '' }}">
-    <label
-        for="{{ $column->field }}"
-        class="mb-1 font-semibold"
-    >
-        {{ Str::ucfirst($column->field) }}@if(!$column->is_null)<sup class="text-red-500">*</sup>@endif
-    </label>
+<div class="flex flex-col {{ $is_textarea ? 'md:col-span-2' : '' }} gap-1">
+    <sa-label for="{{ $column->field }}">
+        {{ $column->field }}<span class="text-red-500 text-sm">@if(!$column->is_null)*@endif</span>
+    </sa-label>
 
     @if($is_textarea)
-        <textarea
+        <sa-textarea
             rows="6"
-            class="input"
             id="{{ $column->field }}"
             name="{{ $column->field }}"
             placeholder="{{ $column->type }}"
             {{ $column->is_null ? '' : 'required' }}
-        >{{ old($column->field) ?? $data[$column->field] ?? '' }}</textarea>
+            model-value="{{ old($column->field) ?? $data[$column->field] ?? '' }}"
+        />
     @elseif(str_starts_with($column->type, 'enum'))
-        <select
-            class="input"
-            id="{{ $column->field }}"
+        <sa-select
             name="{{ $column->field }}"
-            {{ $column->is_null ? '' : 'required' }}
-        >
-            @if($column->is_null) <option value="">NULL</option> @endif
-            @php preg_match_all("/\\'(\\w+)\\'/", $column->type, $matches); @endphp
-            @foreach ($matches[1] as $option)
-                <option
-                    value="{{ $option }}"
-                    {{ (old($column->field) ?? $data[$column->field] ?? '') === $option ? 'selected' : '' }}
-                >
-                    {{ Str::ucfirst($option) }}
-                </option>
-            @endforeach
-        </select>
+            default-value="{{ old($column->field) ?? $data[$column->field] ?? '' }}"
+            placeholder="{{ $column->type }}"
+            :required="{{ !$column->is_null }}"
+            :items="[
+                @if($column->is_null) { label: 'NULL', value: '' } @endif
+                @php preg_match_all("/\\'(\\w+)\\'/", $column->type, $matches); @endphp
+                @foreach ($matches[1] as $option)
+                    { label: '{{ $option }}', value: '{{ $option }}' },
+                @endforeach
+            ]"
+        />
     @elseif($column->foreign)
         <foreign-selection
             v-cloak
@@ -52,15 +45,14 @@
             else if ($column->type === 'time') $type = 'time';
             else if (in_array($column->type, ['datetime', 'timestamp'])) $type = 'datetime-local';
         @endphp
-        <input
+        <sa-input
             step="any"
-            class="input"
             type="{{ $type }}"
             id="{{ $column->field }}"
             name="{{ $column->field }}"
             placeholder="{{ $column->type }}"
             {{ $column->is_null ? '' : 'required' }}
-            value="{{ old($column->field) ?? $data[$column->field] ?? (!isset($data) && in_array($column->field, ['created_at', 'updated_at']) ? now() : '') }}"
+            model-value="{{ old($column->field) ?? $data[$column->field] ?? (!isset($data) && in_array($column->field, ['created_at', 'updated_at']) ? now() : '') }}"
         />
     @endif
 </div>

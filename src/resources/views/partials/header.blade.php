@@ -10,10 +10,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
 {{--custom css--}}
-<link href="{{ asset('seamless-admin/css/app.css') }}" rel="stylesheet" />
+@saSafeVite('src/resources/assets/scss/app.scss')
 
-{{--scripts--}}
-<script src="https://unpkg.com/feather-icons@4.29.0/dist/feather.min.js" defer></script>
-<script src="{{ asset('seamless-admin/js/app.js') }}" defer></script>
+@saSafeVite('src/resources/assets/js/navbar.js')
+
+<link rel="preload" as="script" href="https://unpkg.com/lucide@latest" />
+<script src="https://unpkg.com/lucide@latest" defer></script>
 
 @yield('header')

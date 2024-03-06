@@ -4,10 +4,14 @@
 
 @section('title', "Delete $name")
 
+@section('header')
+    @saSafeVite('src/resources/assets/js/app.js')
+@endsection
+
 @section('content')
     <div class="container mx-auto px-4 py-2" id="app">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-semibold">
+            <h2 class="text-3xl sm:text-4xl font-bold">
                 Delete {{ $name }}
             </h2>
         </div>
@@ -27,20 +31,21 @@
                 you are doing before proceeding.</p>
 
             <div class="mt-4 flex justify-end gap-2">
-                <a href="{{ route('admin.type.index', request()->type) }}" class="btn grey">
-                    <i data-feather="x"></i>
-                    Cancel
-                </a>
-                <button class="btn red" onclick="document.getElementById('del').submit()">
-                    <i data-feather="trash-2"></i>
-                    Delete
-                </button>
+                <sa-button as-child variant="outline">
+                    <a href="{{ route('admin.type.index', request()->type) }}">
+                        <i data-lucide="arrow-left" class="size-4"></i>
+                        Cancel
+                    </a>
+                </sa-button>
+                <form action="{{ route('admin.type.destroy', [request()->type, 'ids' => $ids]) }}" method="post">
+                    @csrf
+                    @method('delete')
+                    <sa-button variant="destructive">
+                        <i data-lucide="trash-2" class="size-4"></i>
+                        Delete
+                    </sa-button>
+                </form>
             </div>
-
-            <form action="{{ route('admin.type.destroy', [request()->type, 'ids' => $ids]) }}" method="post" id="del">
-                @csrf
-                @method('delete')
-            </form>
         </div>
     </div>
 @endsection
