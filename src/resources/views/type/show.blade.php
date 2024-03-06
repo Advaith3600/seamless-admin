@@ -17,9 +17,9 @@
             {{ $name }}
         </h2>
 
-        <div class="mt-4 grid grid-cols-1 gap-1">
+        <div class="mt-4 space-y-1">
             @foreach($data->toArray() as $key => $column)
-                <div class="flex bg-white rounded-lg shadow-sm border p-2">
+                <div class="flex bg-white rounded-md border p-2">
                     <div class="opacity-60 mr-2">{{ $key }}:</div>
                     <div>{{ $column }}</div>
                 </div>
@@ -27,7 +27,7 @@
         </div>
 
         <div class="mt-4 flex justify-end items-center gap-2">
-            <sa-button as-child variant="secondary">
+            <sa-button as-child variant="outline">
                 <a href="{{ route('admin.type.index', request()->type) }}">
                     <i data-lucide="arrow-left" class="size-4"></i>
                     Go Back
@@ -35,7 +35,7 @@
             </sa-button>
 
             @if($instance->adminCanAccessEdit())
-                <sa-button as-child variant="outline">
+                <sa-button as-child variant="secondary">
                     <a href="{{ route('admin.type.edit', [request()->type, request()->id]) }}">
                         <i data-lucide="edit" class="size-4"></i>
                         Edit

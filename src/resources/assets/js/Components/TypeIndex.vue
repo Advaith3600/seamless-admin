@@ -1,26 +1,13 @@
 <script setup lang="ts">
-import {
-  FlexRender,
-  useVueTable,
-  getCoreRowModel,
-} from '@tanstack/vue-table'
+import { computed, h, ref } from 'vue'
+import { useVueTable, getCoreRowModel, FlexRender } from '@tanstack/vue-table'
 import { ChevronDown, SearchIcon, Loader2, Trash2Icon } from 'lucide-vue-next'
 import TableSortingIcon from './TableSortingIcon.vue'
 import TableActionDropdown from './TableActionDropdown.vue'
-
+import Select from '@/components/ui/Select.vue'
 import { useDebounceFn } from '@vueuse/core'
-import { h, ref } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import {
   Pagination,
   PaginationEllipsis,
@@ -30,7 +17,7 @@ import {
   PaginationListItem,
   PaginationNext,
   PaginationPrev,
-} from '@/components/ui/pagination';
+} from '@/components/ui/pagination'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -47,52 +34,45 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-const props = defineProps([
-  'dataFetchUrl',
-  'canEdit',
-  'canDelete',
-  'keyName',
-  'fillable',
-  'routes'
-]);
+const props = defineProps(['dataFetchUrl', 'canEdit', 'canDelete', 'keyName', 'fillable', 'routes'])
 
-const redirect = (id) => window.location.href = props.routes.show.replace('%key%', id)
+const redirect = (id) => (window.location.href = props.routes.show.replace('%key%', id))
 
-const columns = [];
+const columns = []
 
 if (props.canDelete) {
   columns.push({
     id: 'select',
-    header: ({ table }) => h(Checkbox, {
-      'checked': table.getIsAllPageRowsSelected(),
-      'onUpdate:checked': value => table.toggleAllPageRowsSelected(!!value),
-      'ariaLabel': 'Select all',
-    }),
-    cell: ({ row }) => h(
-      'div',
-      { class: 'flex items-center' },
+    header: ({ table }) =>
       h(Checkbox, {
-        'checked': row.getIsSelected(),
-        'onUpdate:checked': value => row.toggleSelected(!!value),
-        'ariaLabel': 'Select row',
-        'on:click': (e) => e.stopPropagation(),
-      }
-    )),
+        checked: table.getIsAllPageRowsSelected(),
+        'onUpdate:checked': (value) => table.toggleAllPageRowsSelected(!!value),
+        'aria-label': 'Select all',
+      }),
+    cell: ({ row }) =>
+      h('div', { class: 'flex items-center' }, [
+        h(Checkbox, {
+          checked: row.getIsSelected(),
+          'onUpdate:checked': (value) => row.toggleSelected(!!value),
+          'aria-label': 'Select row',
+          onClick: (e) => e.stopPropagation(),
+        }),
+      ]),
     enableSorting: false,
     enableHiding: false,
-  });
+  })
 }
 
-const loading = ref(true);
-const data = ref([]);
-const meta = ref({});
+const loading = ref(true)
+const data = ref([])
+const meta = ref({})
 const filters = ref({
   page: 1,
   search: '',
   perPage: '10',
   order: 'desc',
-  by: props.keyName
-});
+  by: props.keyName,
+})
 
 props.fillable.forEach((column) => {
   columns.push({
@@ -103,13 +83,13 @@ props.fillable.forEach((column) => {
         {
           variant: 'ghost',
           class: 'h-auto p-0 hover:bg-transparent',
-          onClick: () =>{
-            if (column.getNextSortingOrder()) column.toggleSorting();
-            else column.clearSorting();
+          onClick: () => {
+            if (column.getNextSortingOrder()) column.toggleSorting()
+            else column.clearSorting()
           },
         },
-        [ column.id, h(TableSortingIcon, { filters: filters.value, column: column.id }) ]
-      );
+        [column.id, h(TableSortingIcon, { filters: filters.value, column: column.id })]
+      )
     },
     cell: ({ row }) => h('div', {}, row.original[column]),
   })
@@ -119,109 +99,112 @@ if (props.canDelete || props.canEdit) {
   columns.push({
     id: 'actions',
     enableHiding: false,
-    cell: ({ row }) => {
-      return h('div', { class: 'relative' }, h(TableActionDropdown, {
-        canEdit: props.canEdit,
-        canDelete: props.canDelete,
-        keyVal: row.original[props.keyName],
-        routes: props.routes
-      }))
-    },
+    cell: ({ row }) =>
+      h('div', { class: 'relative' }, [
+        h(TableActionDropdown, {
+          canEdit: props.canEdit,
+          canDelete: props.canDelete,
+          keyVal: row.original[props.keyName],
+          routes: props.routes,
+        }),
+      ]),
   })
 }
 
-const fetchData = useDebounceFn(async (initial = false) => {
-  if (!initial && loading.value) return;
-  loading.value = true;
+const fetchData = useDebounceFn(
+  async (initial = false) => {
+    if (!initial && loading.value) return
+    loading.value = true
 
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(filters.value))
-    params.set(key, value);
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(filters.value)) params.set(key, value)
 
-  const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
-  window.history.pushState({ path: newurl }, '', newurl);
+    const newurl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?${params.toString()}`
+    window.history.pushState({ path: newurl }, '', newurl)
 
-  try {
-    const res = await fetch(props.dataFetchUrl + '?' + params.toString(), {
-      headers: {
-        Accept: 'application/json'
-      }
-    })
-    const json = await res.json();
-    meta.value = json;
-    data.value = json.data;
-  } catch (e) { }
+    try {
+      const res = await fetch(`${props.dataFetchUrl}?${params.toString()}`, {
+        headers: { Accept: 'application/json' },
+      })
+      const json = await res.json()
+      meta.value = json
+      data.value = json.data
+    } catch (e) {}
 
-  loading.value = false;
-}, 200);
+    loading.value = false
+  },
+  200
+)
 
-const url = new URL(window.location);
-url.searchParams.forEach((value, key) => filters.value[key] = value);
-fetchData(true);
+const url = new URL(window.location)
+url.searchParams.forEach((value, key) => (filters.value[key] = value))
+fetchData(true)
 
 const table = useVueTable({
-  get data() { return data.value },
+  get data() {
+    return data.value
+  },
   getCoreRowModel: getCoreRowModel(),
   columns,
   manualPagination: true,
   manualSorting: true,
   manualFiltering: true,
   onGlobalFilterChange: (search) => {
-    filters.value.search = search;
-    filters.value.page = 1;
-    table.resetRowSelection();
-    fetchData();
+    filters.value.search = search
+    filters.value.page = 1
+    table.resetRowSelection()
+    fetchData()
   },
   onSortingChange: (item) => {
-    const value = item();
+    const value = item()
     if (value.length) {
-      filters.value.by = value[0].id;
-      filters.value.order = value[0].desc ? 'desc' : 'asc';
+      filters.value.by = value[0].id
+      filters.value.order = value[0].desc ? 'desc' : 'asc'
     } else {
-      filters.value.by = props.keyName;
-      filters.value.order = 'desc';
+      filters.value.by = props.keyName
+      filters.value.order = 'desc'
     }
-    table.resetRowSelection();
-    fetchData();
+    table.resetRowSelection()
+    fetchData()
   },
   state: {
-    get sorting() { return [{ id: filters.value.by, desc: filters.value.order === 'desc' }] }
-  }
+    get sorting() {
+      return [{ id: filters.value.by, desc: filters.value.order === 'desc' }]
+    },
+  },
 })
 
 const updatePage = (i) => {
-  filters.value.page = i;
-  table.resetRowSelection();
-  fetchData();
+  filters.value.page = i
+  table.resetRowSelection()
+  fetchData()
 }
 
 const updatePerPage = (i) => {
-  filters.value.page = 1;
-  filters.value.perPage = i;
-  table.resetRowSelection();
-  fetchData();
+  filters.value.page = 1
+  filters.value.perPage = i
+  table.resetRowSelection()
+  fetchData()
 }
 
 const deleteSelected = () => {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams()
   table
     .getSelectedRowModel()
-    .rows
-    .map(row => row.original[props.keyName])
-    .forEach((id, i) => params.set(`ids[${i}]`, id));
+    .rows.map((row) => row.original[props.keyName])
+    .forEach((id, i) => params.set(`ids[${i}]`, id))
 
-  window.location.href = props.routes.delete + '?' + params.toString();
+  window.location.href = `${props.routes.delete}?${params.toString()}`
 }
 
-const isMobile = ref(window.innerWidth <= 768);
-window.addEventListener('resize', () => isMobile.value = window.innerWidth <= 768);
+const isMobile = computed(() => window.innerWidth <= 768)
 </script>
 
 <template>
   <div class="w-full">
     <div
-      class="fixed top-0 inset-x-0 bg-white shadow-lg flex items-center justify-end p-4 z-20"
       v-if="table.getIsSomeRowsSelected() || table.getIsAllPageRowsSelected()"
+      class="fixed top-0 inset-x-0 bg-white shadow-lg flex items-center justify-end p-4 z-20"
     >
       <Button variant="destructive" @click="deleteSelected" size="sm">
         <Trash2Icon />
@@ -234,7 +217,7 @@ window.addEventListener('resize', () => isMobile.value = window.innerWidth <= 76
         <div class="relative w-full max-w-sm items-center">
           <Input
             class="max-w-sm pl-10"
-            :placeholder="'Search in ' + props.fillable.join(', ')"
+            :placeholder="`Search in ${props.fillable.join(', ')}`"
             :model-value="filters.search"
             @update:model-value="table.setGlobalFilter($event)"
           />
@@ -242,17 +225,12 @@ window.addEventListener('resize', () => isMobile.value = window.innerWidth <= 76
             <SearchIcon class="text-muted-foreground" :size="18" />
           </span>
         </div>
-
-        <Select :model-value="filters.perPage" @update:model-value="updatePerPage">
-          <SelectTrigger class="w-24">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem v-for="page in [5, 10, 20, 50, 100]" :value="page.toString()">{{ page }}</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <Select
+          :model-value="filters.perPage"
+          :items="['5', '10', '20', '50', '100'].map((i) => ({ value: i, label: i }))"
+          @update:model-value="updatePerPage"
+          class="w-24"
+        />
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
@@ -265,9 +243,7 @@ window.addEventListener('resize', () => isMobile.value = window.innerWidth <= 76
             v-for="column in table.getAllColumns().filter((column) => column.getCanHide())"
             :key="column.id"
             :checked="column.getIsVisible()"
-            @update:checked="(value) => {
-              column.toggleVisibility(!!value)
-            }"
+            @update:checked="(value) => column.toggleVisibility(!!value)"
           >
             {{ column.id }}
           </DropdownMenuCheckboxItem>
@@ -279,7 +255,11 @@ window.addEventListener('resize', () => isMobile.value = window.innerWidth <= 76
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
             <TableHead v-for="header in headerGroup.headers" :key="header.id">
-              <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
+              <FlexRender
+                v-if="!header.isPlaceholder"
+                :render="header.column.columnDef.header"
+                :props="header.getContext()"
+              />
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -299,10 +279,7 @@ window.addEventListener('resize', () => isMobile.value = window.innerWidth <= 76
           </template>
 
           <TableRow v-else>
-            <TableCell
-              :colSpan="columns.length"
-              class="h-24 text-center"
-            >
+            <TableCell :colSpan="columns.length" class="h-24 text-center">
               No results.
             </TableCell>
           </TableRow>
@@ -310,7 +287,7 @@ window.addEventListener('resize', () => isMobile.value = window.innerWidth <= 76
       </Table>
 
       <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-transparent backdrop-blur">
-        <Loader2 class="animate-spin" :size="36"/>
+        <Loader2 class="animate-spin" :size="36" />
       </div>
     </div>
 

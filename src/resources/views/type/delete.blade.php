@@ -31,7 +31,7 @@
                 you are doing before proceeding.</p>
 
             <div class="mt-4 flex justify-end gap-2">
-                <sa-button as-child variant="secondary">
+                <sa-button as-child variant="outline">
                     <a href="{{ route('admin.type.index', request()->type) }}">
                         <i data-lucide="arrow-left" class="size-4"></i>
                         Cancel

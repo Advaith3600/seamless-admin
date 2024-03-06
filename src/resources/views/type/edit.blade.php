@@ -25,7 +25,7 @@
             </div>
 
             <div class="flex gap-2 mt-4 justify-end">
-                <sa-button as-child variant="secondary">
+                <sa-button as-child variant="outline">
                     <a href="{{ route('admin.type.index', request()->type) }}">
                         <i data-lucide="arrow-left" class="size-4"></i>
                         Cancel
@@ -33,7 +33,7 @@
                 </sa-button>
                 <sa-button>
                     <i data-lucide="edit" class="size-4"></i>
-                    Edit
+                    Update
                 </sa-button>
             </div>
         </form>

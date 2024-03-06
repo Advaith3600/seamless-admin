@@ -1,8 +1,7 @@
 $sidebar-width: 300px;
-$navbar-height: 65px;
 
 body {
-    min-height: 100vh;
+    min-height: 100dvh;
     background: var(--seamless-background);
     color: var(--seamless-color);
 }
@@ -10,7 +9,7 @@ body {
 #main {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 #footer {
@@ -23,13 +22,7 @@ body {
 #logo {
     background: var(--seamless-sidebar-background);
     color: var(--seamless-sidebar-color);
-    border-bottom: 1px solid var(--seamless-sidebar-color);
     width: $sidebar-width;
-    height: $navbar-height;
-}
-
-#navbar {
-    height: $navbar-height;
 }
 
 #sidebar {
@@ -40,7 +33,8 @@ body {
     width: $sidebar-width;
 
     ul {
-        padding: 0.25rem 0;
+        padding: 0 0 0.5rem;
+        @apply space-y-1;
 
         li {
             padding: 0 0.5rem;
@@ -63,9 +57,7 @@ body {
                 width: 100%;
                 transition: background 250ms ease;
                 border-radius: 6px;
-                margin: 0.25rem 0;
                 @apply px-3 py-1.5;
-
                 &:hover {
                     background: rgba(255, 255, 255, .1);
                 }

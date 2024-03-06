@@ -24,14 +24,14 @@
             </div>
 
             <div class="flex gap-2 mt-4 justify-end">
-                <sa-button as-child variant="secondary">
+                <sa-button as-child variant="outline">
                     <a href="{{ route('admin.type.index', request()->type) }}">
-                        <i data-lucide="x"></i>
+                        <i data-lucide="x" class="size-4"></i>
                         Cancel
                     </a>
                 </sa-button>
                 <sa-button>
-                    <i data-lucide="plus"></i>
+                    <i data-lucide="plus" class="size-4"></i>
                     Create
                 </sa-button>
             </div>

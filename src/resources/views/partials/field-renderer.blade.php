@@ -15,23 +15,19 @@
             model-value="{{ old($column->field) ?? $data[$column->field] ?? '' }}"
         />
     @elseif(str_starts_with($column->type, 'enum'))
-        <select
-            class="input"
-            id="{{ $column->field }}"
+        <sa-select
             name="{{ $column->field }}"
-            {{ $column->is_null ? '' : 'required' }}
-        >
-            @if($column->is_null) <option value="">NULL</option> @endif
-            @php preg_match_all("/\\'(\\w+)\\'/", $column->type, $matches); @endphp
-            @foreach ($matches[1] as $option)
-                <option
-                    value="{{ $option }}"
-                    {{ (old($column->field) ?? $data[$column->field] ?? '') === $option ? 'selected' : '' }}
-                >
-                    {{ Str::ucfirst($option) }}
-                </option>
-            @endforeach
-        </select>
+            default-value="{{ old($column->field) ?? $data[$column->field] ?? '' }}"
+            placeholder="{{ $column->type }}"
+            :required="{{ !$column->is_null }}"
+            :items="[
+                @if($column->is_null) { label: 'NULL', value: '' } @endif
+                @php preg_match_all("/\\'(\\w+)\\'/", $column->type, $matches); @endphp
+                @foreach ($matches[1] as $option)
+                    { label: '{{ $option }}', value: '{{ $option }}' },
+                @endforeach
+            ]"
+        />
     @elseif($column->foreign)
         <foreign-selection
             v-cloak
