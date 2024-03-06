@@ -81,7 +81,7 @@ All the model specific configuration should go inside the respective model file.
 - `public bool $hasAdminPage`: Set this to `false` to prevent the model from showing up on the admin page. Advantage of
   using this instead of removing the trait from the model is when other models try to check for foreign keys this will
   be used as a hint to fetch other columns.
-- `public string $adminIcon`: We use [feathericons](https://feathericons.com/) as the icon provider. Type in the name of
+- `public string $adminIcon`: We use [lucide](https://lucide.dev/) for the icons. Type in the name of
   the icon you want to use.
 - `public string $adminGroup`: Add a value to change the group in which the model should be displayed in the sidebar.
 
@@ -225,7 +225,7 @@ The `add` method takes 3 arguments:
 2. Alias for the route. This is the name that will be displayed in the sidebar of the admin page.
 3. An optional array which consists of
     - `isAllowed`: Whether the route is visible to the current user
-    - `icon`: Icon to be displayed in the sidebar. We use [feathericons](https://feathericons.com)
+    - `icon`: Icon to be displayed in the sidebar. We use [lucide](https://lucide.dev/) for icons
     - `group`: Group in sidebar to which the custom route should be added.
 
 To fully utilize the custom page, extend the layout `seamless::layout` in your blade file. Exmaple:

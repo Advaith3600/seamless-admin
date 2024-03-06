@@ -13,6 +13,8 @@
 @saSafeVite('src/resources/assets/scss/app.scss')
 
 @saSafeVite('src/resources/assets/js/navbar.js')
+
+<link rel="preload" as="script" href="https://unpkg.com/lucide@latest" />
 <script src="https://unpkg.com/lucide@latest" defer></script>
 
 @yield('header')
